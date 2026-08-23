@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,9 +10,11 @@ import {
   Platform,
   TextInput,
   Pressable,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  useWindowDimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Animated, {
@@ -24,20 +26,39 @@ import Animated, {
 import { theme } from '../../theme/theme';
 import { fetchProducts, Product } from '../../api/apiService';
 import { ProductGridCard } from '../../components/home/ProductGridCard';
+import {
+  FilterSheet,
+  ShopFilters,
+  DEFAULT_FILTERS,
+  applyShopFilters,
+  countActiveFilters,
+} from '../../components/shop/FilterSheet';
 
-// Screen-local brand gradients — deep navy through bright royal blue,
-// and a very soft blue-to-lavender tint for the promo surface.
-const HERO_GRADIENT = ['#000E38', '#0B3FC4'] as const;
 const PROMO_GRADIENT = ['#EEF1FC', '#E6E1FB'] as const;
 const LAVENDER = '#6D5BD0';
 const BRIGHT_BLUE = '#2F6FED';
 
+const PROMO_SLIDES = [
+  {
+    title: 'Discover fresh arrivals',
+    subtitle: 'Curated essentials delivered to your smart cart',
+  },
+  {
+    title: 'Free delivery every day',
+    subtitle: 'No minimum order, no hidden fees',
+  },
+  {
+    title: 'New products weekly',
+    subtitle: 'Fresh picks added to the catalog often',
+  },
+];
+
 const CATEGORIES = [
-  { label: 'Fruits', icon: 'nutrition' as const, bg: '#FF9F5A' },
-  { label: 'Vegetables', icon: 'leaf' as const, bg: '#2ECC9B' },
-  { label: 'Dairy', icon: 'water' as const, bg: '#38C6E8' },
-  { label: 'Snacks', icon: 'fast-food' as const, bg: '#F5677D' },
-  { label: 'Beverages', icon: 'wine' as const, bg: '#B478E8' },
+  { label: 'Fruits', icon: 'nutrition' as const, color: '#FF9F5A', bg: '#FFF1E6' },
+  { label: 'Vegetables', icon: 'leaf' as const, color: '#2ECC9B', bg: '#E8FBF4' },
+  { label: 'Dairy', icon: 'water' as const, color: '#38C6E8', bg: '#E8F9FE' },
+  { label: 'Snacks', icon: 'fast-food' as const, color: '#F5677D', bg: '#FEEBEE' },
+  { label: 'Beverages', icon: 'wine' as const, color: '#B478E8', bg: '#F5EBFE' },
 ];
 
 const QUICK_ACTIONS = [
@@ -48,13 +69,6 @@ const QUICK_ACTIONS = [
 ];
 
 const SPOTLIGHT_COLORS = ['#002583', '#DB2777', '#0284C7'];
-
-function getGreeting() {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
-}
 
 function SectionHeader({
   overline,
@@ -76,7 +90,7 @@ function SectionHeader({
       </View>
       {onSeeAll ? (
         <TouchableOpacity style={styles.seeAllBtn} onPress={onSeeAll} activeOpacity={0.7}>
-          <Text style={styles.seeAll}>View all</Text>
+          <Text style={styles.seeAll}>See all</Text>
           <Ionicons name="chevron-forward" size={14} color={theme.colors.primary} />
         </TouchableOpacity>
       ) : null}
@@ -118,11 +132,16 @@ function QuickActionItem({
 
 export default function CustomerHome() {
   const router = useRouter();
+  const { width: windowWidth } = useWindowDimensions();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const [promoIndex, setPromoIndex] = useState(0);
+  const promoScrollRef = useRef<ScrollView>(null);
+  const [shopFilters, setShopFilters] = useState<ShopFilters>(DEFAULT_FILTERS);
+  const [filterSheetVisible, setFilterSheetVisible] = useState(false);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -137,8 +156,11 @@ export default function CustomerHome() {
     loadProducts();
   }, []);
 
-  const gridProducts = products.slice(0, 8);
-  const inStockCount = products.filter((p) => p.stock > 0).length;
+  const dealProducts = useMemo(
+    () => applyShopFilters(products, searchQuery, shopFilters).slice(0, 6),
+    [products, searchQuery, shopFilters]
+  );
+  const activeFilterCount = countActiveFilters(shopFilters);
 
   const filteredSpotlight = useMemo(() => {
     return products.filter((p) => p.stock > 0).slice(0, 3);
@@ -155,126 +177,128 @@ export default function CustomerHome() {
     });
   };
 
+  const promoCardWidth = windowWidth - theme.spacing.lg * 2;
+
+  const handlePromoScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const index = Math.round(e.nativeEvent.contentOffset.x / promoCardWidth);
+    if (index !== promoIndex) setPromoIndex(index);
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Hero */}
-        <LinearGradient
-          colors={HERO_GRADIENT}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.heroSection}
-        >
-          <View pointerEvents="none" style={styles.glowTopRight} />
-          <View pointerEvents="none" style={styles.glowBottomLeft} />
+        {/* Header */}
+        <View style={styles.headerSection}>
+          <Animated.Text entering={FadeInDown.duration(400)} style={styles.customerGreeting}>
+            Hi, <Text style={styles.customerGreetingBold}>Alex</Text> 👋
+          </Animated.Text>
 
-          <Animated.View entering={FadeInDown.duration(450)} style={styles.brandRow}>
-            <View style={styles.brandMarkRow}>
-              <View style={styles.brandMark}>
-                <Ionicons name="cart" size={17} color="#FFFFFF" />
-              </View>
-              <Text style={styles.brandName}>Smart Cart Store</Text>
+          <Animated.View entering={FadeInDown.delay(40).duration(400)} style={styles.locationRow}>
+            <View style={styles.locationTextBlock}>
+              <Text style={styles.locationLabel}>LOCATION</Text>
+              <TouchableOpacity style={styles.locationValueRow} activeOpacity={0.7}>
+                <Ionicons name="location" size={15} color={theme.colors.primary} />
+                <Text style={styles.locationValue}>Smart Cart Store</Text>
+                <Ionicons name="chevron-down" size={14} color={theme.colors.textSecondary} />
+              </TouchableOpacity>
             </View>
 
-            <TouchableOpacity activeOpacity={0.8} style={styles.notificationWrap}>
-              <BlurView intensity={35} tint="dark" style={styles.notificationBlur}>
-                <Ionicons name="notifications-outline" size={18} color="#FFF" />
-                <View style={styles.notificationDot} />
-              </BlurView>
+            <TouchableOpacity activeOpacity={0.8} style={styles.notificationBtn}>
+              <Ionicons name="notifications-outline" size={18} color={theme.colors.text} />
+              <View style={styles.notificationDot} />
             </TouchableOpacity>
           </Animated.View>
 
-          <Animated.View entering={FadeInDown.delay(50).duration(450)} style={styles.greetingBlock}>
-            <Text style={styles.greeting}>{getGreeting()}</Text>
-            <Text style={styles.userName}>
-              Welcome back, <Text style={styles.userNameEmphasis}>Alex</Text>
-            </Text>
-          </Animated.View>
-
-          <Animated.View entering={FadeInDown.delay(160).duration(450)} style={styles.statsGlassWrap}>
-            <BlurView intensity={28} tint="dark" style={styles.statsGlass}>
-              <View style={styles.statItem}>
-                <Ionicons name="cube-outline" size={16} color="rgba(255,255,255,0.75)" />
-                <Text style={styles.statValue}>{products.length}</Text>
-                <Text style={styles.statLabel}>Products</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Ionicons name="checkmark-done-circle-outline" size={16} color="rgba(255,255,255,0.75)" />
-                <Text style={styles.statValue}>{inStockCount}</Text>
-                <Text style={styles.statLabel}>Available</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Ionicons name="flash" size={16} color="#C9BFFF" />
-                <Text style={[styles.statValue, styles.statValueEmphasis]}>Free</Text>
-                <Text style={styles.statLabel}>Delivery</Text>
-              </View>
-            </BlurView>
-          </Animated.View>
-        </LinearGradient>
-
-        {/* Floating search bar — overlaps the hero's rounded edge */}
-        <Animated.View
-          entering={FadeInDown.delay(110).duration(450)}
-          style={styles.floatingSearchWrap}
-        >
-          <View style={styles.searchBar}>
-            <Ionicons name="search-outline" size={18} color={theme.colors.textMuted} />
-            <TextInput
-              placeholder="Search products, brands..."
-              placeholderTextColor={theme.colors.textMuted}
-              style={styles.searchInput}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              returnKeyType="search"
-              onSubmitEditing={goToShop}
-            />
-            <View style={styles.searchDivider} />
-            <TouchableOpacity style={styles.filterBtn} activeOpacity={0.75} onPress={goToShop}>
-              <Ionicons name="options-outline" size={17} color={theme.colors.primary} />
+          <Animated.View entering={FadeInDown.delay(80).duration(400)} style={styles.searchRow}>
+            <View style={styles.searchBar}>
+              <Ionicons name="search-outline" size={18} color={theme.colors.textMuted} />
+              <TextInput
+                placeholder="Search products, brands..."
+                placeholderTextColor={theme.colors.textMuted}
+                style={styles.searchInput}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                returnKeyType="search"
+                onSubmitEditing={goToShop}
+              />
+            </View>
+            <TouchableOpacity
+              style={styles.filterBtn}
+              activeOpacity={0.8}
+              onPress={() => setFilterSheetVisible(true)}
+            >
+              <Ionicons name="options-outline" size={18} color="#FFFFFF" />
+              {activeFilterCount > 0 && (
+                <View style={styles.filterBadge}>
+                  <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
+                </View>
+              )}
             </TouchableOpacity>
-          </View>
-        </Animated.View>
+          </Animated.View>
+        </View>
 
         <View style={styles.bodyContent}>
-          {/* Promo */}
-          <Animated.View entering={FadeInDown.delay(140).duration(450)} style={styles.block}>
-            <TouchableOpacity activeOpacity={0.92} onPress={goToShop}>
-              <LinearGradient
-                colors={PROMO_GRADIENT}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.promoCard}
-              >
-                <View pointerEvents="none" style={styles.promoShapeA} />
-                <View pointerEvents="none" style={styles.promoShapeB} />
-                <Ionicons
-                  name="bag-handle-outline"
-                  size={96}
-                  color="rgba(0,37,131,0.08)"
-                  style={styles.promoIllustration}
-                />
+          {/* Promo carousel */}
+          <Animated.View entering={FadeInDown.delay(120).duration(450)} style={styles.block}>
+            <ScrollView
+              ref={promoScrollRef}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={handlePromoScroll}
+              style={{ marginHorizontal: -theme.spacing.lg }}
+              contentContainerStyle={{ paddingHorizontal: theme.spacing.lg }}
+            >
+              {PROMO_SLIDES.map((slide, i) => (
+                <TouchableOpacity
+                  key={slide.title}
+                  activeOpacity={0.92}
+                  onPress={goToShop}
+                  style={{ width: promoCardWidth, marginRight: i < PROMO_SLIDES.length - 1 ? 0 : 0 }}
+                >
+                  <LinearGradient
+                    colors={PROMO_GRADIENT}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.promoCard}
+                  >
+                    <View pointerEvents="none" style={styles.promoShapeA} />
+                    <View pointerEvents="none" style={styles.promoShapeB} />
+                    <Ionicons
+                      name="bag-handle-outline"
+                      size={96}
+                      color="rgba(0,37,131,0.08)"
+                      style={styles.promoIllustration}
+                    />
 
-                <View style={styles.promoTextBlock}>
-                  <Text style={styles.promoOverline}>WEEKLY SELECTION</Text>
-                  <Text style={styles.promoTitle}>Discover fresh arrivals</Text>
-                  <Text style={styles.promoSubtitle}>
-                    Curated essentials delivered to your smart cart
-                  </Text>
-                </View>
-                <View style={styles.promoArrow}>
-                  <Ionicons name="arrow-forward" size={18} color={theme.colors.primary} />
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
+                    <View style={styles.promoTextBlock}>
+                      <Text style={styles.promoOverline}>WEEKLY SELECTION</Text>
+                      <Text style={styles.promoTitle}>{slide.title}</Text>
+                      <Text style={styles.promoSubtitle}>{slide.subtitle}</Text>
+                      <View style={styles.promoShopBtn}>
+                        <Text style={styles.promoShopBtnText}>Shop Now</Text>
+                      </View>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.dotsRow}>
+              {PROMO_SLIDES.map((slide, i) => (
+                <View
+                  key={slide.title}
+                  style={[styles.dot, i === promoIndex && styles.dotActive]}
+                />
+              ))}
+            </View>
           </Animated.View>
 
           {/* Quick actions */}
-          <Animated.View entering={FadeInDown.delay(180).duration(450)} style={styles.block}>
+          <Animated.View entering={FadeInDown.delay(160).duration(450)} style={styles.block}>
             <SectionHeader overline="NAVIGATE" title="Quick access" />
             <View style={styles.quickActionsRow}>
               {QUICK_ACTIONS.map((action) => (
@@ -288,8 +312,8 @@ export default function CustomerHome() {
           </Animated.View>
 
           {/* Categories */}
-          <Animated.View entering={FadeInDown.delay(220).duration(450)} style={styles.block}>
-            <SectionHeader overline="BROWSE" title="Shop by category" onSeeAll={goToShop} />
+          <Animated.View entering={FadeInDown.delay(200).duration(450)} style={styles.block}>
+            <SectionHeader title="Category" onSeeAll={goToShop} />
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -300,15 +324,19 @@ export default function CustomerHome() {
                 return (
                   <TouchableOpacity
                     key={cat.label}
-                    style={[
-                      styles.categoryCard,
-                      { backgroundColor: cat.bg, shadowColor: cat.bg },
-                      isSelected && styles.categoryCardActive,
-                    ]}
-                    activeOpacity={0.85}
+                    style={styles.categoryItem}
+                    activeOpacity={0.8}
                     onPress={() => setSelectedCategory(isSelected ? null : cat.label)}
                   >
-                    <Ionicons name={cat.icon} size={28} color="#FFFFFF" />
+                    <View
+                      style={[
+                        styles.categoryCircle,
+                        { backgroundColor: cat.bg },
+                        isSelected && { borderColor: cat.color },
+                      ]}
+                    >
+                      <Ionicons name={cat.icon} size={26} color={cat.color} />
+                    </View>
                     <Text style={styles.categoryLabel}>{cat.label}</Text>
                   </TouchableOpacity>
                 );
@@ -316,26 +344,17 @@ export default function CustomerHome() {
             </ScrollView>
           </Animated.View>
 
-          {/* Product discovery grid */}
-          <Animated.View entering={FadeInDown.delay(260).duration(450)} style={styles.block}>
-            <SectionHeader
-              overline="DISCOVER"
-              title="Popular today"
-              subtitle="Trending picks from your store"
-              onSeeAll={goToShop}
-            />
+          {/* Best deal grid */}
+          <Animated.View entering={FadeInDown.delay(240).duration(450)} style={styles.block}>
+            <SectionHeader title="Best Deal" onSeeAll={goToShop} />
 
             {loading ? (
               <View style={styles.loadingState}>
                 <ActivityIndicator size="small" color={theme.colors.primary} />
               </View>
-            ) : gridProducts.length > 0 ? (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.horizontalList}
-              >
-                {gridProducts.map((product, index) => (
+            ) : dealProducts.length > 0 ? (
+              <View style={styles.dealGrid}>
+                {dealProducts.map((product, index) => (
                   <ProductGridCard
                     key={product.id}
                     id={product.id}
@@ -350,7 +369,7 @@ export default function CustomerHome() {
                     onPress={goToShop}
                   />
                 ))}
-              </ScrollView>
+              </View>
             ) : (
               <View style={styles.emptyState}>
                 <Ionicons name="basket-outline" size={32} color={theme.colors.textMuted} />
@@ -362,7 +381,7 @@ export default function CustomerHome() {
 
           {/* Fresh picks */}
           {!loading && filteredSpotlight.length > 0 && (
-            <Animated.View entering={FadeInDown.delay(300).duration(450)} style={styles.block}>
+            <Animated.View entering={FadeInDown.delay(280).duration(450)} style={styles.block}>
               <SectionHeader
                 overline="RECOMMENDED"
                 title="Editor's picks"
@@ -406,7 +425,7 @@ export default function CustomerHome() {
           )}
 
           {/* Smart cart */}
-          <Animated.View entering={FadeInDown.delay(340).duration(450)} style={styles.blockLast}>
+          <Animated.View entering={FadeInDown.delay(320).duration(450)} style={styles.blockLast}>
             <View style={styles.smartCartCard}>
               <View style={styles.smartCartIcon}>
                 <Ionicons name="cart-outline" size={22} color={theme.colors.success} />
@@ -424,6 +443,13 @@ export default function CustomerHome() {
           </Animated.View>
         </View>
       </ScrollView>
+
+      <FilterSheet
+        visible={filterSheetVisible}
+        onClose={() => setFilterSheetVisible(false)}
+        filters={shopFilters}
+        onApply={setShopFilters}
+      />
     </SafeAreaView>
   );
 }
@@ -436,35 +462,14 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 130,
   },
-  heroSection: {
+  headerSection: {
     paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing.lg,
-    paddingBottom: theme.spacing.xxl + 6,
-    borderBottomLeftRadius: theme.radius.xxl,
-    borderBottomRightRadius: theme.radius.xxl,
-    overflow: 'hidden',
-  },
-  glowTopRight: {
-    position: 'absolute',
-    top: -70,
-    right: -50,
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: 'rgba(255,255,255,0.07)',
-  },
-  glowBottomLeft: {
-    position: 'absolute',
-    bottom: -90,
-    left: -60,
-    width: 230,
-    height: 230,
-    borderRadius: 115,
-    backgroundColor: 'rgba(109,91,208,0.22)',
+    paddingTop: theme.spacing.sm,
+    paddingBottom: theme.spacing.sm,
   },
   bodyContent: {
     paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing.md,
+    paddingTop: theme.spacing.sm,
   },
   block: {
     marginBottom: theme.spacing.xl,
@@ -472,44 +477,51 @@ const styles = StyleSheet.create({
   blockLast: {
     marginBottom: theme.spacing.md,
   },
-  brandRow: {
+  customerGreeting: {
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.textSecondary,
+    fontWeight: theme.typography.weights.medium,
+    marginBottom: theme.spacing.md + 2,
+  },
+  customerGreetingBold: {
+    color: theme.colors.text,
+    fontWeight: theme.typography.weights.bold,
+  },
+  locationRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: theme.spacing.lg,
   },
-  brandMarkRow: {
+  locationTextBlock: {
+    flex: 1,
+  },
+  locationLabel: {
+    fontSize: 10,
+    fontWeight: theme.typography.weights.semiBold,
+    color: theme.colors.textMuted,
+    letterSpacing: theme.typography.letterSpacing.caps,
+    marginBottom: 4,
+  },
+  locationValueRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 9,
+    gap: 4,
   },
-  brandMark: {
-    width: 32,
-    height: 32,
-    borderRadius: theme.radius.medium,
-    backgroundColor: 'rgba(255,255,255,0.16)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.22)',
-    alignItems: 'center',
-    justifyContent: 'center',
+  locationValue: {
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text,
   },
-  brandName: {
-    fontSize: theme.typography.sizes.sm,
-    fontWeight: theme.typography.weights.semiBold,
-    color: 'rgba(255,255,255,0.92)',
-    letterSpacing: theme.typography.letterSpacing.wide,
-  },
-  notificationWrap: {
-    borderRadius: theme.radius.medium,
-    overflow: 'hidden',
-  },
-  notificationBlur: {
+  notificationBtn: {
     width: 40,
     height: 40,
+    borderRadius: theme.radius.pill,
+    backgroundColor: theme.colors.card,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.22)',
+    ...theme.shadows.sm,
   },
   notificationDot: {
     position: 'absolute',
@@ -518,79 +530,26 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: '#C9BFFF',
+    backgroundColor: theme.colors.error,
     borderWidth: 1.5,
-    borderColor: '#001240',
+    borderColor: theme.colors.card,
   },
-  greetingBlock: {
-    marginBottom: theme.spacing.lg + 6,
-  },
-  greeting: {
-    fontSize: theme.typography.sizes.sm,
-    color: 'rgba(255,255,255,0.62)',
-    fontWeight: theme.typography.weights.regular,
-    marginBottom: 4,
-  },
-  userName: {
-    fontSize: theme.typography.sizes.xxl,
-    fontWeight: theme.typography.weights.medium,
-    color: 'rgba(255,255,255,0.92)',
-    letterSpacing: theme.typography.letterSpacing.tight,
-    lineHeight: 34,
-  },
-  userNameEmphasis: {
-    fontWeight: theme.typography.weights.heavy,
-    color: '#FFFFFF',
-  },
-  statsGlassWrap: {
-    borderRadius: theme.radius.large,
-    overflow: 'hidden',
-  },
-  statsGlass: {
+  searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.16)',
-    paddingVertical: theme.spacing.md + 2,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 5,
-  },
-  statDivider: {
-    width: 1,
-    height: 32,
-    backgroundColor: 'rgba(255,255,255,0.18)',
-  },
-  statValue: {
-    fontSize: theme.typography.sizes.md,
-    fontWeight: theme.typography.weights.bold,
-    color: '#FFF',
-    letterSpacing: theme.typography.letterSpacing.tight,
-  },
-  statValueEmphasis: {
-    color: '#D8CFFF',
-  },
-  statLabel: {
-    fontSize: 10.5,
-    fontWeight: theme.typography.weights.medium,
-    color: 'rgba(255,255,255,0.6)',
-  },
-  floatingSearchWrap: {
-    paddingHorizontal: theme.spacing.lg,
-    marginTop: -26,
-    marginBottom: theme.spacing.sm,
+    gap: 10,
   },
   searchBar: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.card,
     borderRadius: theme.radius.large,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
     paddingHorizontal: theme.spacing.md,
-    paddingVertical: Platform.OS === 'ios' ? 14 : 12,
+    paddingVertical: Platform.OS === 'ios' ? 13 : 11,
     gap: 10,
-    ...theme.shadows.lg,
   },
   searchInput: {
     flex: 1,
@@ -599,18 +558,33 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.weights.regular,
     padding: 0,
   },
-  searchDivider: {
-    width: 1,
-    height: 22,
-    backgroundColor: theme.colors.border,
-  },
   filterBtn: {
-    width: 30,
-    height: 30,
-    borderRadius: theme.radius.small,
-    backgroundColor: theme.colors.background,
+    width: 46,
+    height: 46,
+    borderRadius: theme.radius.large,
+    backgroundColor: theme.colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
+    ...theme.shadows.sm,
+  },
+  filterBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    paddingHorizontal: 4,
+    backgroundColor: theme.colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: theme.colors.background,
+  },
+  filterBadgeText: {
+    fontSize: 10,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.primaryDark,
   },
   promoCard: {
     flexDirection: 'row',
@@ -665,16 +639,35 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.textSecondary,
     lineHeight: 20,
+    marginBottom: 14,
   },
-  promoArrow: {
-    width: 46,
-    height: 46,
-    borderRadius: theme.radius.medium,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
+  promoShopBtn: {
+    alignSelf: 'flex-start',
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: theme.radius.pill,
+  },
+  promoShopBtnText: {
+    color: '#FFFFFF',
+    fontSize: theme.typography.sizes.xs,
+    fontWeight: theme.typography.weights.bold,
+  },
+  dotsRow: {
+    flexDirection: 'row',
     justifyContent: 'center',
-    marginLeft: theme.spacing.md,
-    ...theme.shadows.md,
+    gap: 6,
+    marginTop: 12,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: theme.colors.border,
+  },
+  dotActive: {
+    width: 18,
+    backgroundColor: theme.colors.primary,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -709,7 +702,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 2,
-    paddingTop: 18,
+    paddingTop: 4,
   },
   seeAll: {
     fontSize: theme.typography.sizes.sm,
@@ -745,35 +738,34 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   horizontalList: {
-    gap: 12,
+    gap: 18,
     paddingVertical: 4,
   },
-  categoryCard: {
+  categoryItem: {
+    alignItems: 'center',
+    width: 74,
+  },
+  categoryCircle: {
+    width: 64,
+    height: 64,
+    borderRadius: theme.radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 96,
-    height: 108,
-    gap: 8,
-    borderRadius: theme.radius.xxl,
+    marginBottom: 8,
     borderWidth: 2,
     borderColor: 'transparent',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.32,
-    shadowRadius: 14,
-    elevation: 8,
-  },
-  categoryCardActive: {
-    borderColor: 'rgba(255,255,255,0.85)',
-    shadowOpacity: 0.45,
   },
   categoryLabel: {
     fontSize: theme.typography.sizes.xs,
-    fontWeight: theme.typography.weights.bold,
-    color: '#FFFFFF',
+    fontWeight: theme.typography.weights.medium,
+    color: theme.colors.text,
     textAlign: 'center',
-    textShadowColor: 'rgba(0,0,0,0.15)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+  },
+  dealGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: 14,
   },
   loadingState: {
     paddingVertical: theme.spacing.xxl,

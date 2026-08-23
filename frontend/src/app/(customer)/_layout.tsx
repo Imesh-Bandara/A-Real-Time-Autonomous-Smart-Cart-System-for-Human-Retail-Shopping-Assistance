@@ -7,9 +7,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
-const NAV_DARK = '#0D1226';
-const ICON_ACTIVE_COLOR = NAV_DARK;
-const ICON_INACTIVE_COLOR = 'rgba(255,255,255,0.55)';
+const ICON_ACTIVE_COLOR = '#FFFFFF';
+const ICON_INACTIVE_COLOR = theme.colors.textMuted;
 
 function TabIcon({
   outline,
@@ -38,21 +37,21 @@ export default function CustomerLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#FFFFFF',
-        tabBarInactiveTintColor: 'rgba(255,255,255,0.5)',
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textMuted,
         tabBarStyle: {
-          backgroundColor: NAV_DARK,
+          backgroundColor: theme.colors.card,
           borderTopWidth: 0,
           borderRadius: theme.radius.xxl,
           marginHorizontal: theme.spacing.lg,
           marginBottom: Platform.OS === 'ios' ? 26 : 18,
-          height: 72,
+          height: 80,
           paddingHorizontal: theme.spacing.sm,
           paddingTop: 10,
-          paddingBottom: 10,
-          shadowColor: '#000000',
-          shadowOffset: { width: 0, height: 12 },
-          shadowOpacity: 0.28,
+          paddingBottom: 12,
+          shadowColor: '#0F172A',
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.12,
           shadowRadius: 20,
           elevation: 10,
         },
@@ -63,7 +62,8 @@ export default function CustomerLayout() {
         tabBarLabelStyle: {
           fontSize: 10,
           fontWeight: theme.typography.weights.semiBold,
-          marginTop: 4,
+          marginTop: 6,
+          lineHeight: 13,
           letterSpacing: 0.2,
         },
       }}
@@ -138,13 +138,13 @@ export default function CustomerLayout() {
 
 const navStyles = StyleSheet.create({
   iconPill: {
-    width: 34,
-    height: 34,
+    width: 32,
+    height: 32,
     borderRadius: theme.radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconPillActive: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.primary,
   },
 });

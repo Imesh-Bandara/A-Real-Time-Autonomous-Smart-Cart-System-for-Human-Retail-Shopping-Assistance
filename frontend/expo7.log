@@ -2192,3 +2192,1259 @@ Performance optimizations: OFF.
 Web  WARN  "shadow*" style props are deprecated. Use "boxShadow".
 Web  WARN  "textShadow*" style props are deprecated. Use "textShadow".
 Web  WARN  props.pointerEvents is deprecated. Use style.pointerEvents
+λ Bundled 73ms node_modules\expo\node_modules\@expo\cli\node_modules\@expo\router-server\node\render.js (1 module)
+λ  WARN  "shadow*" style props are deprecated. Use "boxShadow". 
+  console.logWithStack [as warn] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo\node_modules\@expo\cli\build\src\start\server\serverLogLikeMetro.js:214:27)
+  warnOnce (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\modules\warnOnce\index.js:24:13)
+  preprocess (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\preprocess.js:136:13)
+  compileAndInsertAtomic (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:56:34)
+  <unknown> (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:99:26)
+  Function.create (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:87:23)
+  factory (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\index.tsx:193:27)
+  loadModuleImplementation (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:285:5)
+  guardedLoadModule (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:183:21)
+  require (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:98:7)
+  Object.loadRoute (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:239:35)
+  runtimeValidateRouteNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:503:32)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:514:5)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:33:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutes.js:20:41)
+  useStore (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\global-state\useStore.js:28:48)
+  Component (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\ExpoRoot.js:122:46)
+  Object.callComponentInDEV [as react_stack_bottom_frame] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:9808:18)
+  renderWithHooks (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5062:19)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5497:23)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+λ  WARN  "textShadow*" style props are deprecated. Use "textShadow". 
+  console.logWithStack [as warn] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo\node_modules\@expo\cli\build\src\start\server\serverLogLikeMetro.js:214:27)
+  warnOnce (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\modules\warnOnce\index.js:24:13)
+  preprocess (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\preprocess.js:145:13)
+  compileAndInsertAtomic (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:56:34)
+  <unknown> (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:99:26)
+  Function.create (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:87:23)
+  factory (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\index.tsx:431:27)
+  loadModuleImplementation (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:285:5)
+  guardedLoadModule (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:183:21)
+  require (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:98:7)
+  Object.loadRoute (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:239:35)
+  runtimeValidateRouteNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:503:32)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:514:5)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:33:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutes.js:20:41)
+  useStore (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\global-state\useStore.js:28:48)
+  Component (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\ExpoRoot.js:122:46)
+  Object.callComponentInDEV [as react_stack_bottom_frame] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:9808:18)
+  renderWithHooks (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5062:19)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5497:23)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  renderElement (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+Web Bundled 677ms node_modules\expo-router\entry.js (1 module)
+Web Bundled 60ms node_modules\expo-router\entry.js (1 module)
+Web  INFO  %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+Web  LOG  Running application "main" with appParams:
+ {"hydrate": undefined, "rootTag": "#root"} 
+Development-level warnings: ON.
+Performance optimizations: OFF.
+Web  WARN  "shadow*" style props are deprecated. Use "boxShadow".
+Web  WARN  "textShadow*" style props are deprecated. Use "textShadow".
+λ Bundled 118ms node_modules\expo\node_modules\@expo\cli\node_modules\@expo\router-server\node\render.js (1 module)
+λ  WARN  "shadow*" style props are deprecated. Use "boxShadow". 
+  console.logWithStack [as warn] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo\node_modules\@expo\cli\build\src\start\server\serverLogLikeMetro.js:214:27)
+  warnOnce (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\modules\warnOnce\index.js:24:13)
+  preprocess (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\preprocess.js:136:13)
+  compileAndInsertAtomic (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:56:34)
+  <unknown> (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:99:26)
+  Function.create (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:87:23)
+  factory (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\index.tsx:193:27)
+  loadModuleImplementation (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:285:5)
+  guardedLoadModule (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:183:21)
+  require (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:98:7)
+  Object.loadRoute (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:239:35)
+  runtimeValidateRouteNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:503:32)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:514:5)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:33:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutes.js:20:41)
+  useStore (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\global-state\useStore.js:28:48)
+  Component (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\ExpoRoot.js:122:46)
+  Object.callComponentInDEV [as react_stack_bottom_frame] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:9808:18)
+  renderWithHooks (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5062:19)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5497:23)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+λ  WARN  "textShadow*" style props are deprecated. Use "textShadow". 
+  console.logWithStack [as warn] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo\node_modules\@expo\cli\build\src\start\server\serverLogLikeMetro.js:214:27)
+  warnOnce (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\modules\warnOnce\index.js:24:13)
+  preprocess (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\preprocess.js:145:13)
+  compileAndInsertAtomic (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:56:34)
+  <unknown> (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:99:26)
+  Function.create (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:87:23)
+  factory (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\index.tsx:431:27)
+  loadModuleImplementation (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:285:5)
+  guardedLoadModule (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:183:21)
+  require (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:98:7)
+  Object.loadRoute (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:239:35)
+  runtimeValidateRouteNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:503:32)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:514:5)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:33:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutes.js:20:41)
+  useStore (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\global-state\useStore.js:28:48)
+  Component (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\ExpoRoot.js:122:46)
+  Object.callComponentInDEV [as react_stack_bottom_frame] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:9808:18)
+  renderWithHooks (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5062:19)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5497:23)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  renderElement (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+Web Bundled 1100ms node_modules\expo-router\entry.js (1 module)
+λ Bundled 2967ms node_modules\expo\node_modules\@expo\cli\node_modules\@expo\router-server\node\render.js (1 module)
+λ  WARN  "shadow*" style props are deprecated. Use "boxShadow". 
+  console.logWithStack [as warn] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo\node_modules\@expo\cli\build\src\start\server\serverLogLikeMetro.js:214:27)
+  warnOnce (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\modules\warnOnce\index.js:24:13)
+  preprocess (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\preprocess.js:136:13)
+  compileAndInsertAtomic (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:56:34)
+  <unknown> (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:99:26)
+  Function.create (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:87:23)
+  factory (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\index.tsx:193:27)
+  loadModuleImplementation (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:285:5)
+  guardedLoadModule (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:183:21)
+  require (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:98:7)
+  Object.loadRoute (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:239:35)
+  runtimeValidateRouteNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:503:32)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:514:5)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:33:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutes.js:20:41)
+  useStore (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\global-state\useStore.js:28:48)
+  Component (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\ExpoRoot.js:122:46)
+  Object.callComponentInDEV [as react_stack_bottom_frame] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:9808:18)
+  renderWithHooks (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5062:19)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5497:23)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+λ  WARN  "textShadow*" style props are deprecated. Use "textShadow". 
+  console.logWithStack [as warn] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo\node_modules\@expo\cli\build\src\start\server\serverLogLikeMetro.js:214:27)
+  warnOnce (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\modules\warnOnce\index.js:24:13)
+  preprocess (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\preprocess.js:145:13)
+  compileAndInsertAtomic (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:56:34)
+  <unknown> (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:99:26)
+  Function.create (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:87:23)
+  factory (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\index.tsx:431:27)
+  loadModuleImplementation (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:285:5)
+  guardedLoadModule (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:183:21)
+  require (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:98:7)
+  Object.loadRoute (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:239:35)
+  runtimeValidateRouteNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:503:32)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:514:5)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:33:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutes.js:20:41)
+  useStore (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\global-state\useStore.js:28:48)
+  Component (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\ExpoRoot.js:122:46)
+  Object.callComponentInDEV [as react_stack_bottom_frame] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:9808:18)
+  renderWithHooks (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5062:19)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5497:23)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  renderElement (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+Web Bundled 3648ms node_modules\expo-router\entry.js (1 module)
+Web Bundled 3661ms node_modules\expo-router\entry.js (1 module)
+Web  INFO  %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+Web  LOG  Running application "main" with appParams:
+ {"hydrate": undefined, "rootTag": "#root"} 
+Development-level warnings: ON.
+Performance optimizations: OFF.
+Web  WARN  "shadow*" style props are deprecated. Use "boxShadow".
+Web  WARN  "textShadow*" style props are deprecated. Use "textShadow".
+Web  WARN  props.pointerEvents is deprecated. Use style.pointerEvents
+Web Bundled 169ms node_modules\expo-router\entry.js (1 module)
+λ Bundled 203ms node_modules\expo\node_modules\@expo\cli\node_modules\@expo\router-server\node\render.js (1 module)
+λ  WARN  "shadow*" style props are deprecated. Use "boxShadow". 
+  console.logWithStack [as warn] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo\node_modules\@expo\cli\build\src\start\server\serverLogLikeMetro.js:214:27)
+  warnOnce (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\modules\warnOnce\index.js:24:13)
+  preprocess (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\preprocess.js:136:13)
+  compileAndInsertAtomic (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:56:34)
+  <unknown> (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:99:26)
+  Function.create (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:87:23)
+  factory (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\index.tsx:193:27)
+  loadModuleImplementation (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:285:5)
+  guardedLoadModule (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:183:21)
+  require (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:98:7)
+  Object.loadRoute (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:239:35)
+  runtimeValidateRouteNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:503:32)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:514:5)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:33:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutes.js:20:41)
+  useStore (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\global-state\useStore.js:28:48)
+  Component (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\ExpoRoot.js:122:46)
+  Object.callComponentInDEV [as react_stack_bottom_frame] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:9808:18)
+  renderWithHooks (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5062:19)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5497:23)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+λ  WARN  "textShadow*" style props are deprecated. Use "textShadow". 
+  console.logWithStack [as warn] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo\node_modules\@expo\cli\build\src\start\server\serverLogLikeMetro.js:214:27)
+  warnOnce (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\modules\warnOnce\index.js:24:13)
+  preprocess (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\preprocess.js:145:13)
+  compileAndInsertAtomic (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:56:34)
+  <unknown> (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:99:26)
+  Function.create (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:87:23)
+  factory (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\index.tsx:428:27)
+  loadModuleImplementation (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:285:5)
+  guardedLoadModule (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:183:21)
+  require (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:98:7)
+  Object.loadRoute (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:239:35)
+  runtimeValidateRouteNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:503:32)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:514:5)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:33:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutes.js:20:41)
+  useStore (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\global-state\useStore.js:28:48)
+  Component (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\ExpoRoot.js:122:46)
+  Object.callComponentInDEV [as react_stack_bottom_frame] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:9808:18)
+  renderWithHooks (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5062:19)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5497:23)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  renderElement (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+Web Bundled 34ms node_modules\expo-router\entry.js (1 module)
+Web  INFO  %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+Web  LOG  Running application "main" with appParams:
+ {"hydrate": undefined, "rootTag": "#root"} 
+Development-level warnings: ON.
+Performance optimizations: OFF.
+Web  WARN  "shadow*" style props are deprecated. Use "boxShadow".
+Web  WARN  "textShadow*" style props are deprecated. Use "textShadow".
+Web  WARN  props.pointerEvents is deprecated. Use style.pointerEvents
+λ Bundled 76ms node_modules\expo\node_modules\@expo\cli\node_modules\@expo\router-server\node\render.js (1 module)
+λ  WARN  "shadow*" style props are deprecated. Use "boxShadow". 
+  console.logWithStack [as warn] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo\node_modules\@expo\cli\build\src\start\server\serverLogLikeMetro.js:214:27)
+  warnOnce (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\modules\warnOnce\index.js:24:13)
+  preprocess (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\preprocess.js:136:13)
+  compileAndInsertAtomic (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:56:34)
+  <unknown> (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:99:26)
+  Function.create (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:87:23)
+  factory (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\index.tsx:193:27)
+  loadModuleImplementation (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:285:5)
+  guardedLoadModule (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:183:21)
+  require (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:98:7)
+  Object.loadRoute (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:239:35)
+  runtimeValidateRouteNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:503:32)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:514:5)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:33:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutes.js:20:41)
+  useStore (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\global-state\useStore.js:28:48)
+  Component (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\ExpoRoot.js:122:46)
+  Object.callComponentInDEV [as react_stack_bottom_frame] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:9808:18)
+  renderWithHooks (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5062:19)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5497:23)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+λ  WARN  "textShadow*" style props are deprecated. Use "textShadow". 
+  console.logWithStack [as warn] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo\node_modules\@expo\cli\build\src\start\server\serverLogLikeMetro.js:214:27)
+  warnOnce (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\modules\warnOnce\index.js:24:13)
+  preprocess (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\preprocess.js:145:13)
+  compileAndInsertAtomic (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:56:34)
+  <unknown> (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:99:26)
+  Function.create (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-native-web\dist\exports\StyleSheet\index.js:87:23)
+  factory (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\index.tsx:428:27)
+  loadModuleImplementation (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:285:5)
+  guardedLoadModule (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:183:21)
+  require (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\metro\node_modules\metro-runtime\src\polyfills\require.js:98:7)
+  Object.loadRoute (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:239:35)
+  runtimeValidateRouteNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:503:32)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:514:5)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  validateRouteTreeExports (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:516:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutesCore.js:33:9)
+  getRoutes (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\getRoutes.js:20:41)
+  useStore (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\global-state\useStore.js:28:48)
+  Component (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\expo-router\build\ExpoRoot.js:122:46)
+  Object.callComponentInDEV [as react_stack_bottom_frame] (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:9808:18)
+  renderWithHooks (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5062:19)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5497:23)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  run (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6063:15)
+  retryNode (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6417:31)
+  renderNodeDestructive (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:6367:11)
+  finishFunctionComponent (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5106:13)
+  renderElement (F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\node_modules\react-dom\cjs\react-dom-server-legacy.node.development.js:5552:11)
+Web Bundled 722ms node_modules\expo-router\entry.js (1 module)
+Web Bundled 61ms node_modules\expo-router\entry.js (1 module)
+Web  INFO  %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+Web  LOG  Running application "main" with appParams:
+ {"hydrate": undefined, "rootTag": "#root"} 
+Development-level warnings: ON.
+Performance optimizations: OFF.
+Web  WARN  "shadow*" style props are deprecated. Use "boxShadow".
+Web  WARN  "textShadow*" style props are deprecated. Use "textShadow".
+Web  WARN  props.pointerEvents is deprecated. Use style.pointerEvents
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web Bundling failed 32ms node_modules\expo-router\entry.js (1 module)
+λ Bundling failed 48ms node_modules\expo\node_modules\@expo\cli\node_modules\@expo\router-server\node\render.js (1 module)
+
+Metro error: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+
+
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+λ Bundling failed 1308ms node_modules\expo\node_modules\@expo\cli\node_modules\@expo\router-server\node\render.js (1 module)
+Web Bundling failed 1332ms node_modules\expo-router\entry.js (1 module)
+
+Metro error: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.mjs|.mjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+
+
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web Bundled 6291ms .expo\static-tmp\_error.js (133 modules)
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Unable to resolve "../../components/shop/FilterSheet" from "src\app\(customer)\shop.tsx"
+[0m [90m 23 |[39m   applyShopFilters[33m,[39m
+ [90m 24 |[39m   countActiveFilters[33m,[39m
+[31m[1m>[22m[39m[90m 25 |[39m } [36mfrom[39m [32m'../../components/shop/FilterSheet'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 26 |[39m
+ [90m 27 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mShopScreen[39m() {
+ [90m 28 |[39m   [36mconst[39m [products[33m,[39m setProducts] [33m=[39m useState[33m<[39m[33mProduct[39m[][33m>[39m([])[33m;[39m[0m
+
+Import stack:
+
+ src\app\(customer)\shop.tsx
+ | import "../../components/shop/FilterSheet"
+
+ src\app (require.context)
+
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]
+Web  ERROR  [UnableToResolveError: Unable to resolve module ../../components/shop/FilterSheet from F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend\src\app\(customer)\shop.tsx: 
+
+None of these files exist:
+  * src\components\shop\FilterSheet(.web.ts|.ts|.web.tsx|.tsx|.web.mjs|.mjs|.web.js|.js|.web.jsx|.jsx|.web.json|.json|.web.cjs|.cjs|.web.scss|.scss|.web.sass|.sass|.web.css|.css)
+  * src\components\shop\FilterSheet
+  23 |   applyShopFilters,
+  24 |   countActiveFilters,
+> 25 | } from '../../components/shop/FilterSheet';
+     |         ^
+  26 |
+  27 | export default function ShopScreen() {
+  28 |   const [products, setProducts] = useState<Product[]>([]);]

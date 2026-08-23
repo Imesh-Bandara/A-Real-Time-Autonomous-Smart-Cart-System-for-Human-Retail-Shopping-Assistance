@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Pressable } from 'react-nativ
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, {
-  FadeInRight,
+  FadeInDown,
   useSharedValue,
   useAnimatedStyle,
   withSpring,
@@ -38,6 +38,7 @@ export const ProductGridCard: React.FC<ProductGridCardProps> = ({
 }) => {
   const resolvedImageUrl = getImageUrl(imageUrl);
   const isOutOfStock = stock <= 0;
+  const isLowStock = !isOutOfStock && stock <= 10;
 
   const cardScale = useSharedValue(1);
   const cardAnimStyle = useAnimatedStyle(() => ({
@@ -58,7 +59,7 @@ export const ProductGridCard: React.FC<ProductGridCardProps> = ({
 
   return (
     <Animated.View
-      entering={FadeInRight.delay(index * 60).duration(420)}
+      entering={FadeInDown.delay(index * 60).duration(420)}
       style={styles.wrapper}
     >
       <AnimatedTouchable
@@ -80,6 +81,16 @@ export const ProductGridCard: React.FC<ProductGridCardProps> = ({
             </View>
           )}
 
+          {isOutOfStock ? (
+            <View style={[styles.badge, styles.badgeOut]}>
+              <Text style={styles.badgeText}>Sold out</Text>
+            </View>
+          ) : isLowStock ? (
+            <View style={[styles.badge, styles.badgeLow]}>
+              <Text style={styles.badgeText}>{stock} left</Text>
+            </View>
+          ) : null}
+
           <Animated.View style={[styles.heartWrap, heartAnimStyle]}>
             <TouchableOpacity
               style={styles.heartBtn}
@@ -94,15 +105,9 @@ export const ProductGridCard: React.FC<ProductGridCardProps> = ({
               />
             </TouchableOpacity>
           </Animated.View>
-
-          {isOutOfStock && (
-            <View style={styles.outOfStockBadge}>
-              <Text style={styles.outOfStockText}>Sold out</Text>
-            </View>
-          )}
         </View>
 
-        <Text style={styles.name} numberOfLines={2}>
+        <Text style={styles.name} numberOfLines={1}>
           {name}
         </Text>
         <Text style={styles.price}>${price.toFixed(2)}</Text>
@@ -113,10 +118,13 @@ export const ProductGridCard: React.FC<ProductGridCardProps> = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: 148,
+    width: '48%',
   },
   card: {
-    alignItems: 'flex-start',
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.radius.xl,
+    padding: 10,
+    ...theme.shadows.sm,
   },
   imageWrap: {
     position: 'relative',
@@ -128,14 +136,33 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 132,
+    height: 118,
   },
   imagePlaceholder: {
     width: '100%',
-    height: 132,
+    height: 118,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.colors.borderLight,
+  },
+  badge: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: theme.radius.pill,
+  },
+  badgeLow: {
+    backgroundColor: theme.colors.primary,
+  },
+  badgeOut: {
+    backgroundColor: 'rgba(17,24,39,0.75)',
+  },
+  badgeText: {
+    color: '#FFF',
+    fontSize: 10,
+    fontWeight: theme.typography.weights.semiBold,
   },
   heartWrap: {
     position: 'absolute',
@@ -151,26 +178,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     ...theme.shadows.sm,
   },
-  outOfStockBadge: {
-    position: 'absolute',
-    bottom: 8,
-    left: 8,
-    backgroundColor: 'rgba(17,24,39,0.75)',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: theme.radius.pill,
-  },
-  outOfStockText: {
-    color: '#FFF',
-    fontSize: 10,
-    fontWeight: theme.typography.weights.semiBold,
-  },
   name: {
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.medium,
     color: theme.colors.text,
-    lineHeight: 18,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   price: {
     fontSize: theme.typography.sizes.md,
