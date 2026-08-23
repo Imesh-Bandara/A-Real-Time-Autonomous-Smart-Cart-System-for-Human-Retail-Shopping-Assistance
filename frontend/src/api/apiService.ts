@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
+import { router } from 'expo-router';
 
 // IMPORTANT: If testing on a physical phone via Expo Go, replace 127.0.0.1
 // with your computer's local IP address (e.g., 'http://192.168.1.X:5000')
@@ -31,6 +32,20 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// If the token is missing/expired, the backend returns 401 for protected
+// routes — clear the stale token and bounce back to the login screen
+// instead of leaving the UI in a silently-broken authenticated state.
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (axios.isAxiosError(error) && error.response?.status === 401 && _authToken) {
+      _authToken = null;
+      router.replace('/');
+    }
+    return Promise.reject(error);
+  }
+);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -78,6 +93,20 @@ export interface Order {
   item_count: number;
   items?: OrderItem[];
   user_email?: string;        // Admin view only
+}
+
+export interface UserProfile {
+  id: number;
+  email: string;
+  name: string | null;
+  role: string;
+}
+
+export interface UpdateProfilePayload {
+  name?: string;
+  email?: string;
+  current_password?: string;
+  new_password?: string;
 }
 
 export interface SubmitOrderResponse {
@@ -144,6 +173,32 @@ export const loginUser = async (email: string, password: string) => {
     return response.data;
   } catch (error) {
     throw getErrorMessage(error, 'Network error while logging in.');
+  }
+};
+
+// ---------------------------------------------------------------------------
+// Profile
+// ---------------------------------------------------------------------------
+export const fetchProfile = async (): Promise<UserProfile> => {
+  try {
+    const response = await api.get('/api/profile');
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Failed to fetch profile.');
+  }
+};
+
+export const updateProfile = async (
+  payload: UpdateProfilePayload
+): Promise<{ user: UserProfile; access_token: string }> => {
+  try {
+    const response = await api.put('/api/profile', payload);
+    if (response.data.access_token) {
+      setAuthToken(response.data.access_token);
+    }
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Failed to update profile.');
   }
 };
 

@@ -2,7 +2,7 @@ import os
 import uuid
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from flask import Flask, jsonify, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -15,6 +15,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///supermarket.db'
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'super-secret-key-change-in-production')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=12)  # short-lived by default; long enough for dev sessions
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 MB max upload
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads', 'products')
@@ -74,7 +75,16 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     role = db.Column(db.String(20), nullable=False)
+    name = db.Column(db.String(120), nullable=True)
     orders = db.relationship('Order', backref='user', lazy=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'name': self.name,
+            'role': self.role,
+        }
 
 
 class Product(db.Model):
@@ -190,16 +200,34 @@ def migrate_db():
                     conn.execute(db.text(sql))
                     conn.commit()
 
+    # Add missing columns to 'user' table
+    if 'user' in existing_tables:
+        columns = [col['name'] for col in inspector.get_columns('user')]
+        user_migrations = {
+            'name': 'ALTER TABLE user ADD COLUMN name VARCHAR(120)',
+        }
+        for column, sql in user_migrations.items():
+            if column not in columns:
+                with db.engine.connect() as conn:
+                    conn.execute(db.text(sql))
+                    conn.commit()
+
 
 with app.app_context():
     db.create_all()
     migrate_db()
     if not User.query.filter_by(email="admin@test.com").first():
-        admin = User(email="admin@test.com", password="admin123", role="admin")
-        customer = User(email="user@test.com", password="user123", role="customer")
+        admin = User(email="admin@test.com", password="admin123", role="admin", name="Admin User")
+        customer = User(email="user@test.com", password="user123", role="customer", name="Alex Customer")
         item1 = Product(name="Fresh Apples", price=2.99, stock=50)
         item2 = Product(name="Organic Milk", price=3.49, stock=30)
         db.session.add_all([admin, customer, item1, item2])
+        db.session.commit()
+    else:
+        for u, default_name in (('admin@test.com', 'Admin User'), ('user@test.com', 'Alex Customer')):
+            existing = User.query.filter_by(email=u).first()
+            if existing and not existing.name:
+                existing.name = default_name
         db.session.commit()
 
 
@@ -242,7 +270,56 @@ def login():
         identity=str(user.id),
         additional_claims={"role": user.role, "email": user.email}
     )
-    return jsonify(access_token=access_token, role=user.role, email=user.email), 200
+    return jsonify(
+        access_token=access_token, role=user.role, email=user.email, name=user.name
+    ), 200
+
+
+@app.route('/api/profile', methods=['GET'])
+@jwt_required()
+def get_profile():
+    user = User.query.get(int(get_jwt_identity()))
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+    return jsonify(user.to_dict()), 200
+
+
+@app.route('/api/profile', methods=['PUT'])
+@jwt_required()
+def update_profile():
+    user = User.query.get(int(get_jwt_identity()))
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    data = request.get_json() or {}
+    name = data.get('name')
+    email = data.get('email')
+    current_password = data.get('current_password')
+    new_password = data.get('new_password')
+
+    if name is not None:
+        user.name = name.strip() or None
+
+    if email is not None and email.strip() and email.strip() != user.email:
+        email = email.strip()
+        if User.query.filter(User.email == email, User.id != user.id).first():
+            return jsonify({"msg": "Email is already in use"}), 409
+        user.email = email
+
+    if new_password:
+        if user.password != current_password:
+            return jsonify({"msg": "Current password is incorrect"}), 401
+        if len(new_password) < 6:
+            return jsonify({"msg": "New password must be at least 6 characters"}), 400
+        user.password = new_password
+
+    db.session.commit()
+
+    access_token = create_access_token(
+        identity=str(user.id),
+        additional_claims={"role": user.role, "email": user.email}
+    )
+    return jsonify(user=user.to_dict(), access_token=access_token), 200
 
 
 # ---------------------------------------------------------------------------

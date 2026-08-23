@@ -121,6 +121,12 @@ export default function CustomerLayout() {
         }}
       />
       <Tabs.Screen
+        name="edit-profile"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      <Tabs.Screen
         name="review-order"
         options={{
           href: null, // Hide from tab bar
