@@ -23,8 +23,8 @@ const QUICK_LINKS = [
     label: 'Inventory',
     icon: 'cube-outline' as const,
     route: '/(admin)/inventory',
-    color: '#4F46E5',
-    bg: '#EEF2FF',
+    color: '#002583',
+    bg: '#E6EAF7',
   },
   {
     label: 'Orders',
@@ -148,8 +148,8 @@ export default function AdminDashboard() {
                     label="Total products"
                     value={products.length}
                     icon="cube-outline"
-                    color="#4F46E5"
-                    background="#EEF2FF"
+                    color="#002583"
+                    background="#E6EAF7"
                   />
                   <AdminStatCard
                     label="Low stock items"

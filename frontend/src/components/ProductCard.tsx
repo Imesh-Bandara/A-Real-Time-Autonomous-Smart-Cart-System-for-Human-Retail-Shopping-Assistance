@@ -156,7 +156,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   onPressOut={handlePressOut}
                 >
                   <LinearGradient
-                    colors={isOutOfStock ? ['#94A3B8', '#94A3B8'] : ['#EC4899', '#F43F5E']}
+                    colors={isOutOfStock ? ['#94A3B8', '#94A3B8'] : ['#001A5C', '#002583']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.addToCartGradient}
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 18,
     fontWeight: '900',
-    color: '#EC4899',
+    color: '#002583',
   },
   compactPrice: {
     fontSize: 16,
@@ -295,9 +295,9 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     ...Platform.select({
-      ios: { shadowColor: '#EC4899', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.3, shadowRadius: 10 },
+      ios: { shadowColor: '#002583', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.3, shadowRadius: 10 },
       android: { elevation: 4 },
-      web: { boxShadow: '0px 6px 15px rgba(236, 72, 153, 0.3)' },
+      web: { boxShadow: '0px 6px 15px rgba(0, 37, 131, 0.3)' },
     }),
   },
   addToCartGradient: {

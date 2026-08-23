@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,16 +8,28 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { fetchProducts, Product } from '../../api/apiService';
 import { ProductCard } from '../../components/ProductCard';
 import { theme } from '../../theme/theme';
 import { Input } from '../../components/ui/Input';
 import { useCart } from '../../context/CartContext';
+import {
+  FilterSheet,
+  ShopFilters,
+  DEFAULT_FILTERS,
+  applyShopFilters,
+  countActiveFilters,
+} from '../../components/shop/FilterSheet';
 
 export default function ShopScreen() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<ShopFilters>(DEFAULT_FILTERS);
+  const [filterSheetVisible, setFilterSheetVisible] = useState(false);
   const { addToCart, removeFromCart, getItemQuantity } = useCart();
 
   const showAlert = (title: string, msg: string) => {
@@ -47,12 +59,40 @@ export default function ShopScreen() {
     }
   };
 
+  const visibleProducts = useMemo(
+    () => applyShopFilters(products, searchQuery, filters),
+    [products, searchQuery, filters]
+  );
+  const activeFilterCount = countActiveFilters(filters);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Shop Catalog</Text>
-          <Input placeholder="Search catalog..." style={styles.search} />
+          <View style={styles.searchRow}>
+            <View style={styles.searchInputWrap}>
+              <Input
+                placeholder="Search products, brands..."
+                style={styles.search}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                returnKeyType="search"
+              />
+            </View>
+            <TouchableOpacity
+              style={styles.filterBtn}
+              activeOpacity={0.8}
+              onPress={() => setFilterSheetVisible(true)}
+            >
+              <Ionicons name="options-outline" size={18} color="#FFFFFF" />
+              {activeFilterCount > 0 && (
+                <View style={styles.filterBadge}>
+                  <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
 
         {loading ? (
@@ -61,13 +101,17 @@ export default function ShopScreen() {
           </View>
         ) : (
           <FlatList
-            data={products}
+            data={visibleProducts}
             keyExtractor={(item) => item.id.toString()}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContent}
             ListEmptyComponent={
               <View style={styles.emptyState}>
-                <Text style={styles.emptyText}>No products available yet.</Text>
+                <Text style={styles.emptyText}>
+                  {products.length === 0
+                    ? 'No products available yet.'
+                    : 'No products match your search or filters.'}
+                </Text>
               </View>
             }
             renderItem={({ item }) => (
@@ -86,6 +130,13 @@ export default function ShopScreen() {
           />
         )}
       </View>
+
+      <FilterSheet
+        visible={filterSheetVisible}
+        onClose={() => setFilterSheetVisible(false)}
+        filters={filters}
+        onApply={setFilters}
+      />
     </SafeAreaView>
   );
 }
@@ -111,6 +162,42 @@ const styles = StyleSheet.create({
   },
   search: {
     marginBottom: 0,
+  },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  searchInputWrap: {
+    flex: 1,
+  },
+  filterBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: theme.radius.medium,
+    backgroundColor: theme.colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...theme.shadows.sm,
+  },
+  filterBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    paddingHorizontal: 4,
+    backgroundColor: theme.colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: theme.colors.background,
+  },
+  filterBadgeText: {
+    fontSize: 10,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.primaryDark,
   },
   center: {
     flex: 1,

@@ -61,8 +61,8 @@ export default function AdminOrders() {
           <View style={styles.block}>
             <AdminSectionHeader overline="TODAY" title="Order summary" />
             <View style={styles.summaryRow}>
-              <View style={[styles.summaryCard, { backgroundColor: '#EEF2FF' }]}>
-                <Text style={[styles.summaryValue, { color: '#4F46E5' }]}>37</Text>
+              <View style={[styles.summaryCard, { backgroundColor: '#E6EAF7' }]}>
+                <Text style={[styles.summaryValue, { color: '#002583' }]}>37</Text>
                 <Text style={styles.summaryLabel}>Total orders</Text>
               </View>
               <View style={[styles.summaryCard, { backgroundColor: '#ECFDF5' }]}>
