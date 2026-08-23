@@ -1,0 +1,4 @@
+  --non-interactive is not supported, use $CI=1 instead
+Starting project at F:\final year project\A-Real-Time-Autonomous-Smart-Cart-System-for-Human-Retail-Shopping-Assistance\frontend
+Using src/app as the root directory for Expo Router.
+React Compiler enabled

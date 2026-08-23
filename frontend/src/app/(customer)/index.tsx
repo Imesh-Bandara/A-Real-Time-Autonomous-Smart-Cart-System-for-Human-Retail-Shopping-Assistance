@@ -9,31 +9,45 @@ import {
   ActivityIndicator,
   Platform,
   TextInput,
+  Pressable,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import Animated, { FadeInDown } from 'react-native-reanimated';
+import Animated, {
+  FadeInDown,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import { theme } from '../../theme/theme';
 import { fetchProducts, Product } from '../../api/apiService';
-import { HomeProductTile } from '../../components/home/HomeProductTile';
+import { ProductGridCard } from '../../components/home/ProductGridCard';
+
+// Screen-local brand gradients — deep navy through bright royal blue,
+// and a very soft blue-to-lavender tint for the promo surface.
+const HERO_GRADIENT = ['#000E38', '#0B3FC4'] as const;
+const PROMO_GRADIENT = ['#EEF1FC', '#E6E1FB'] as const;
+const LAVENDER = '#6D5BD0';
+const BRIGHT_BLUE = '#2F6FED';
 
 const CATEGORIES = [
-  { label: 'Fruits', icon: 'nutrition-outline' as const, color: '#EA580C', bg: '#FFF7ED' },
-  { label: 'Vegetables', icon: 'leaf-outline' as const, color: '#16A34A', bg: '#F0FDF4' },
-  { label: 'Dairy', icon: 'water-outline' as const, color: '#2563EB', bg: '#EFF6FF' },
-  { label: 'Snacks', icon: 'fast-food-outline' as const, color: '#DB2777', bg: '#FDF2F8' },
-  { label: 'Beverages', icon: 'wine-outline' as const, color: '#7C3AED', bg: '#F5F3FF' },
+  { label: 'Fruits', icon: 'nutrition' as const, bg: '#FF9F5A' },
+  { label: 'Vegetables', icon: 'leaf' as const, bg: '#2ECC9B' },
+  { label: 'Dairy', icon: 'water' as const, bg: '#38C6E8' },
+  { label: 'Snacks', icon: 'fast-food' as const, bg: '#F5677D' },
+  { label: 'Beverages', icon: 'wine' as const, bg: '#B478E8' },
 ];
 
 const QUICK_ACTIONS = [
-  { label: 'Shop', icon: 'storefront-outline' as const, route: '/(customer)/shop', color: '#4F46E5', bg: '#EEF2FF' },
-  { label: 'Cart', icon: 'cart-outline' as const, route: '/(customer)/cart', color: '#DB2777', bg: '#FDF2F8' },
-  { label: 'Orders', icon: 'receipt-outline' as const, route: '/(customer)/orders', color: '#0284C7', bg: '#F0F9FF' },
-  { label: 'Profile', icon: 'person-outline' as const, route: '/(customer)/profile', color: '#059669', bg: '#ECFDF5' },
+  { label: 'Shop', icon: 'storefront' as const, route: '/(customer)/shop', bg: '#22BFAE' },
+  { label: 'Cart', icon: 'cart' as const, route: '/(customer)/cart', bg: '#9B72E8' },
+  { label: 'Orders', icon: 'receipt' as const, route: '/(customer)/orders', bg: '#F7B84B' },
+  { label: 'Profile', icon: 'person' as const, route: '/(customer)/profile', bg: '#4CC2F1' },
 ];
 
-const SPOTLIGHT_COLORS = ['#4F46E5', '#DB2777', '#0284C7'];
+const SPOTLIGHT_COLORS = ['#002583', '#DB2777', '#0284C7'];
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -70,12 +84,45 @@ function SectionHeader({
   );
 }
 
+function QuickActionItem({
+  action,
+  onPress,
+}: {
+  action: (typeof QUICK_ACTIONS)[number];
+  onPress: () => void;
+}) {
+  const scale = useSharedValue(1);
+  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+
+  return (
+    <Animated.View style={[styles.quickActionTile, animStyle]}>
+      <Pressable
+        style={[
+          styles.quickActionTouch,
+          { backgroundColor: action.bg, shadowColor: action.bg },
+        ]}
+        onPress={onPress}
+        onPressIn={() => {
+          scale.value = withSpring(0.92, { damping: 12, stiffness: 300 });
+        }}
+        onPressOut={() => {
+          scale.value = withSpring(1, { damping: 12, stiffness: 300 });
+        }}
+      >
+        <Ionicons name={action.icon} size={26} color="#FFFFFF" />
+        <Text style={styles.quickActionLabel}>{action.label}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
 export default function CustomerHome() {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -90,7 +137,7 @@ export default function CustomerHome() {
     loadProducts();
   }, []);
 
-  const popularProducts = products.slice(0, 8);
+  const gridProducts = products.slice(0, 8);
   const inStockCount = products.filter((p) => p.stock > 0).length;
 
   const filteredSpotlight = useMemo(() => {
@@ -98,6 +145,15 @@ export default function CustomerHome() {
   }, [products]);
 
   const goToShop = () => router.push('/(customer)/shop');
+
+  const toggleFavorite = (id: number) => {
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -107,29 +163,69 @@ export default function CustomerHome() {
       >
         {/* Hero */}
         <LinearGradient
-          colors={[theme.colors.heroStart, theme.colors.heroEnd]}
+          colors={HERO_GRADIENT}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.heroSection}
         >
-          <Animated.View entering={FadeInDown.duration(450)} style={styles.header}>
-            <View style={styles.headerLeft}>
-              <View style={styles.locationRow}>
-                <Ionicons name="location-outline" size={13} color="rgba(255,255,255,0.85)" />
-                <Text style={styles.locationText}>Smart Cart Store</Text>
+          <View pointerEvents="none" style={styles.glowTopRight} />
+          <View pointerEvents="none" style={styles.glowBottomLeft} />
+
+          <Animated.View entering={FadeInDown.duration(450)} style={styles.brandRow}>
+            <View style={styles.brandMarkRow}>
+              <View style={styles.brandMark}>
+                <Ionicons name="cart" size={17} color="#FFFFFF" />
               </View>
-              <Text style={styles.greeting}>{getGreeting()}</Text>
-              <Text style={styles.userName}>Welcome back, Alex</Text>
+              <Text style={styles.brandName}>Smart Cart Store</Text>
             </View>
-            <TouchableOpacity style={styles.notificationBtn} activeOpacity={0.8}>
-              <Ionicons name="notifications-outline" size={20} color="#FFF" />
+
+            <TouchableOpacity activeOpacity={0.8} style={styles.notificationWrap}>
+              <BlurView intensity={35} tint="dark" style={styles.notificationBlur}>
+                <Ionicons name="notifications-outline" size={18} color="#FFF" />
+                <View style={styles.notificationDot} />
+              </BlurView>
             </TouchableOpacity>
           </Animated.View>
 
-          <Animated.View entering={FadeInDown.delay(60).duration(450)} style={styles.searchBar}>
+          <Animated.View entering={FadeInDown.delay(50).duration(450)} style={styles.greetingBlock}>
+            <Text style={styles.greeting}>{getGreeting()}</Text>
+            <Text style={styles.userName}>
+              Welcome back, <Text style={styles.userNameEmphasis}>Alex</Text>
+            </Text>
+          </Animated.View>
+
+          <Animated.View entering={FadeInDown.delay(160).duration(450)} style={styles.statsGlassWrap}>
+            <BlurView intensity={28} tint="dark" style={styles.statsGlass}>
+              <View style={styles.statItem}>
+                <Ionicons name="cube-outline" size={16} color="rgba(255,255,255,0.75)" />
+                <Text style={styles.statValue}>{products.length}</Text>
+                <Text style={styles.statLabel}>Products</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Ionicons name="checkmark-done-circle-outline" size={16} color="rgba(255,255,255,0.75)" />
+                <Text style={styles.statValue}>{inStockCount}</Text>
+                <Text style={styles.statLabel}>Available</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Ionicons name="flash" size={16} color="#C9BFFF" />
+                <Text style={[styles.statValue, styles.statValueEmphasis]}>Free</Text>
+                <Text style={styles.statLabel}>Delivery</Text>
+              </View>
+            </BlurView>
+          </Animated.View>
+        </LinearGradient>
+
+        {/* Floating search bar — overlaps the hero's rounded edge */}
+        <Animated.View
+          entering={FadeInDown.delay(110).duration(450)}
+          style={styles.floatingSearchWrap}
+        >
+          <View style={styles.searchBar}>
             <Ionicons name="search-outline" size={18} color={theme.colors.textMuted} />
             <TextInput
-              placeholder="Search products..."
+              placeholder="Search products, brands..."
               placeholderTextColor={theme.colors.textMuted}
               style={styles.searchInput}
               value={searchQuery}
@@ -137,60 +233,56 @@ export default function CustomerHome() {
               returnKeyType="search"
               onSubmitEditing={goToShop}
             />
-          </Animated.View>
-
-          <Animated.View entering={FadeInDown.delay(100).duration(450)} style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{products.length}</Text>
-              <Text style={styles.statLabel}>Products</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{inStockCount}</Text>
-              <Text style={styles.statLabel}>Available</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>Free</Text>
-              <Text style={styles.statLabel}>Delivery</Text>
-            </View>
-          </Animated.View>
-        </LinearGradient>
+            <View style={styles.searchDivider} />
+            <TouchableOpacity style={styles.filterBtn} activeOpacity={0.75} onPress={goToShop}>
+              <Ionicons name="options-outline" size={17} color={theme.colors.primary} />
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
 
         <View style={styles.bodyContent}>
           {/* Promo */}
           <Animated.View entering={FadeInDown.delay(140).duration(450)} style={styles.block}>
-            <TouchableOpacity style={styles.promoCard} activeOpacity={0.9} onPress={goToShop}>
-              <View style={styles.promoAccent} />
-              <View style={styles.promoTextBlock}>
-                <Text style={styles.promoOverline}>WEEKLY SELECTION</Text>
-                <Text style={styles.promoTitle}>Discover fresh arrivals</Text>
-                <Text style={styles.promoSubtitle}>
-                  Curated essentials delivered to your smart cart
-                </Text>
-              </View>
-              <View style={styles.promoArrow}>
-                <Ionicons name="arrow-forward" size={18} color={theme.colors.primary} />
-              </View>
+            <TouchableOpacity activeOpacity={0.92} onPress={goToShop}>
+              <LinearGradient
+                colors={PROMO_GRADIENT}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.promoCard}
+              >
+                <View pointerEvents="none" style={styles.promoShapeA} />
+                <View pointerEvents="none" style={styles.promoShapeB} />
+                <Ionicons
+                  name="bag-handle-outline"
+                  size={96}
+                  color="rgba(0,37,131,0.08)"
+                  style={styles.promoIllustration}
+                />
+
+                <View style={styles.promoTextBlock}>
+                  <Text style={styles.promoOverline}>WEEKLY SELECTION</Text>
+                  <Text style={styles.promoTitle}>Discover fresh arrivals</Text>
+                  <Text style={styles.promoSubtitle}>
+                    Curated essentials delivered to your smart cart
+                  </Text>
+                </View>
+                <View style={styles.promoArrow}>
+                  <Ionicons name="arrow-forward" size={18} color={theme.colors.primary} />
+                </View>
+              </LinearGradient>
             </TouchableOpacity>
           </Animated.View>
 
           {/* Quick actions */}
           <Animated.View entering={FadeInDown.delay(180).duration(450)} style={styles.block}>
             <SectionHeader overline="NAVIGATE" title="Quick access" />
-            <View style={styles.quickActionsCard}>
+            <View style={styles.quickActionsRow}>
               {QUICK_ACTIONS.map((action) => (
-                <TouchableOpacity
+                <QuickActionItem
                   key={action.label}
-                  style={styles.quickAction}
-                  activeOpacity={0.75}
+                  action={action}
                   onPress={() => router.push(action.route as any)}
-                >
-                  <View style={[styles.quickActionIcon, { backgroundColor: action.bg }]}>
-                    <Ionicons name={action.icon} size={20} color={action.color} />
-                  </View>
-                  <Text style={styles.quickActionLabel}>{action.label}</Text>
-                </TouchableOpacity>
+                />
               ))}
             </View>
           </Animated.View>
@@ -210,39 +302,26 @@ export default function CustomerHome() {
                     key={cat.label}
                     style={[
                       styles.categoryCard,
-                      { backgroundColor: isSelected ? cat.color : cat.bg },
+                      { backgroundColor: cat.bg, shadowColor: cat.bg },
                       isSelected && styles.categoryCardActive,
                     ]}
-                    activeOpacity={0.75}
+                    activeOpacity={0.85}
                     onPress={() => setSelectedCategory(isSelected ? null : cat.label)}
                   >
-                    <View
-                      style={[
-                        styles.categoryIconWrap,
-                        { backgroundColor: isSelected ? 'rgba(255,255,255,0.2)' : '#FFFFFF' },
-                      ]}
-                    >
-                      <Ionicons
-                        name={cat.icon}
-                        size={20}
-                        color={isSelected ? '#FFF' : cat.color}
-                      />
-                    </View>
-                    <Text style={[styles.categoryLabel, isSelected && styles.categoryLabelActive]}>
-                      {cat.label}
-                    </Text>
+                    <Ionicons name={cat.icon} size={28} color="#FFFFFF" />
+                    <Text style={styles.categoryLabel}>{cat.label}</Text>
                   </TouchableOpacity>
                 );
               })}
             </ScrollView>
           </Animated.View>
 
-          {/* Popular products */}
+          {/* Product discovery grid */}
           <Animated.View entering={FadeInDown.delay(260).duration(450)} style={styles.block}>
             <SectionHeader
-              overline="COLLECTION"
-              title="Popular products"
-              subtitle="Most browsed items this week"
+              overline="DISCOVER"
+              title="Popular today"
+              subtitle="Trending picks from your store"
               onSeeAll={goToShop}
             />
 
@@ -250,14 +329,14 @@ export default function CustomerHome() {
               <View style={styles.loadingState}>
                 <ActivityIndicator size="small" color={theme.colors.primary} />
               </View>
-            ) : popularProducts.length > 0 ? (
+            ) : gridProducts.length > 0 ? (
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.horizontalList}
               >
-                {popularProducts.map((product, index) => (
-                  <HomeProductTile
+                {gridProducts.map((product, index) => (
+                  <ProductGridCard
                     key={product.id}
                     id={product.id}
                     name={product.name}
@@ -266,6 +345,8 @@ export default function CustomerHome() {
                     description={product.description}
                     imageUrl={product.image_url}
                     index={index}
+                    isFavorite={favorites.has(product.id)}
+                    onToggleFavorite={() => toggleFavorite(product.id)}
                     onPress={goToShop}
                   />
                 ))}
@@ -353,18 +434,37 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   scrollContent: {
-    paddingBottom: 110,
+    paddingBottom: 130,
   },
   heroSection: {
     paddingHorizontal: theme.spacing.lg,
     paddingTop: theme.spacing.lg,
-    paddingBottom: theme.spacing.xl + 4,
-    borderBottomLeftRadius: theme.radius.xl,
-    borderBottomRightRadius: theme.radius.xl,
+    paddingBottom: theme.spacing.xxl + 6,
+    borderBottomLeftRadius: theme.radius.xxl,
+    borderBottomRightRadius: theme.radius.xxl,
+    overflow: 'hidden',
+  },
+  glowTopRight: {
+    position: 'absolute',
+    top: -70,
+    right: -50,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(255,255,255,0.07)',
+  },
+  glowBottomLeft: {
+    position: 'absolute',
+    bottom: -90,
+    left: -60,
+    width: 230,
+    height: 230,
+    borderRadius: 115,
+    backgroundColor: 'rgba(109,91,208,0.22)',
   },
   bodyContent: {
     paddingHorizontal: theme.spacing.lg,
-    paddingTop: theme.spacing.xl,
+    paddingTop: theme.spacing.md,
   },
   block: {
     marginBottom: theme.spacing.xl,
@@ -372,61 +472,125 @@ const styles = StyleSheet.create({
   blockLast: {
     marginBottom: theme.spacing.md,
   },
-  header: {
+  brandRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: theme.spacing.lg + 4,
+    alignItems: 'center',
+    marginBottom: theme.spacing.lg,
   },
-  headerLeft: {
-    flex: 1,
-    paddingRight: theme.spacing.md,
-  },
-  locationRow: {
+  brandMarkRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    marginBottom: 12,
+    gap: 9,
   },
-  locationText: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: theme.typography.sizes.xs,
-    fontWeight: theme.typography.weights.medium,
+  brandMark: {
+    width: 32,
+    height: 32,
+    borderRadius: theme.radius.medium,
+    backgroundColor: 'rgba(255,255,255,0.16)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.22)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  brandName: {
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.semiBold,
+    color: 'rgba(255,255,255,0.92)',
     letterSpacing: theme.typography.letterSpacing.wide,
+  },
+  notificationWrap: {
+    borderRadius: theme.radius.medium,
+    overflow: 'hidden',
+  },
+  notificationBlur: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.22)',
+  },
+  notificationDot: {
+    position: 'absolute',
+    top: 9,
+    right: 10,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#C9BFFF',
+    borderWidth: 1.5,
+    borderColor: '#001240',
+  },
+  greetingBlock: {
+    marginBottom: theme.spacing.lg + 6,
   },
   greeting: {
     fontSize: theme.typography.sizes.sm,
-    color: 'rgba(255,255,255,0.65)',
+    color: 'rgba(255,255,255,0.62)',
     fontWeight: theme.typography.weights.regular,
     marginBottom: 4,
   },
   userName: {
     fontSize: theme.typography.sizes.xxl,
-    fontWeight: theme.typography.weights.bold,
-    color: '#FFF',
+    fontWeight: theme.typography.weights.medium,
+    color: 'rgba(255,255,255,0.92)',
     letterSpacing: theme.typography.letterSpacing.tight,
     lineHeight: 34,
   },
-  notificationBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: theme.radius.medium,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+  userNameEmphasis: {
+    fontWeight: theme.typography.weights.heavy,
+    color: '#FFFFFF',
+  },
+  statsGlassWrap: {
+    borderRadius: theme.radius.large,
+    overflow: 'hidden',
+  },
+  statsGlass: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    borderColor: 'rgba(255,255,255,0.16)',
+    paddingVertical: theme.spacing.md + 2,
+  },
+  statItem: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 5,
+  },
+  statDivider: {
+    width: 1,
+    height: 32,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+  },
+  statValue: {
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.bold,
+    color: '#FFF',
+    letterSpacing: theme.typography.letterSpacing.tight,
+  },
+  statValueEmphasis: {
+    color: '#D8CFFF',
+  },
+  statLabel: {
+    fontSize: 10.5,
+    fontWeight: theme.typography.weights.medium,
+    color: 'rgba(255,255,255,0.6)',
+  },
+  floatingSearchWrap: {
+    paddingHorizontal: theme.spacing.lg,
+    marginTop: -26,
+    marginBottom: theme.spacing.sm,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.card,
-    borderRadius: theme.radius.medium,
+    borderRadius: theme.radius.large,
     paddingHorizontal: theme.spacing.md,
     paddingVertical: Platform.OS === 'ios' ? 14 : 12,
-    marginBottom: theme.spacing.lg + 4,
     gap: 10,
-    ...theme.shadows.md,
+    ...theme.shadows.lg,
   },
   searchInput: {
     flex: 1,
@@ -435,70 +599,64 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.weights.regular,
     padding: 0,
   },
-  statsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    borderRadius: theme.radius.large,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)',
-    paddingVertical: theme.spacing.md,
-  },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 4,
-  },
-  statDivider: {
+  searchDivider: {
     width: 1,
-    height: 32,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    height: 22,
+    backgroundColor: theme.colors.border,
   },
-  statValue: {
-    fontSize: theme.typography.sizes.lg,
-    fontWeight: theme.typography.weights.bold,
-    color: '#FFF',
-    marginBottom: 4,
-    letterSpacing: theme.typography.letterSpacing.tight,
-  },
-  statLabel: {
-    fontSize: theme.typography.sizes.xs,
-    fontWeight: theme.typography.weights.medium,
-    color: 'rgba(255,255,255,0.65)',
+  filterBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: theme.radius.small,
+    backgroundColor: theme.colors.background,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   promoCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: theme.colors.promoBackground,
-    borderRadius: theme.radius.large,
+    borderRadius: theme.radius.xxl,
     padding: theme.spacing.lg,
-    borderWidth: 1,
-    borderColor: '#C7D2FE',
     overflow: 'hidden',
     ...theme.shadows.sm,
   },
-  promoAccent: {
+  promoShapeA: {
     position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: 4,
-    backgroundColor: theme.colors.primary,
+    top: -40,
+    right: 30,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: 'rgba(255,255,255,0.35)',
+  },
+  promoShapeB: {
+    position: 'absolute',
+    bottom: -50,
+    right: -30,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: 'rgba(109,91,208,0.12)',
+  },
+  promoIllustration: {
+    position: 'absolute',
+    right: 8,
+    bottom: -12,
   },
   promoTextBlock: {
     flex: 1,
-    paddingLeft: 8,
+    paddingRight: 8,
   },
   promoOverline: {
     fontSize: 10,
-    fontWeight: theme.typography.weights.semiBold,
-    color: theme.colors.primary,
+    fontWeight: theme.typography.weights.bold,
+    color: LAVENDER,
     letterSpacing: theme.typography.letterSpacing.caps,
     marginBottom: 8,
   },
   promoTitle: {
     fontSize: theme.typography.sizes.lg,
-    fontWeight: theme.typography.weights.semiBold,
+    fontWeight: theme.typography.weights.bold,
     color: theme.colors.text,
     letterSpacing: theme.typography.letterSpacing.tight,
     marginBottom: 6,
@@ -509,14 +667,14 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   promoArrow: {
-    width: 44,
-    height: 44,
+    width: 46,
+    height: 46,
     borderRadius: theme.radius.medium,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: theme.spacing.md,
-    ...theme.shadows.sm,
+    ...theme.shadows.md,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -531,7 +689,7 @@ const styles = StyleSheet.create({
   overline: {
     fontSize: 10,
     fontWeight: theme.typography.weights.semiBold,
-    color: theme.colors.primaryLight,
+    color: BRIGHT_BLUE,
     letterSpacing: theme.typography.letterSpacing.caps,
     marginBottom: 6,
   },
@@ -558,34 +716,33 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.weights.medium,
     color: theme.colors.primary,
   },
-  quickActionsCard: {
+  quickActionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: theme.colors.card,
-    borderRadius: theme.radius.large,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    paddingVertical: theme.spacing.lg,
-    paddingHorizontal: theme.spacing.sm,
-    ...theme.shadows.sm,
+    gap: 10,
   },
-  quickAction: {
+  quickActionTile: {
     flex: 1,
-    alignItems: 'center',
-    paddingHorizontal: 4,
   },
-  quickActionIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: theme.radius.medium,
+  quickActionTouch: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    aspectRatio: 1,
+    borderRadius: theme.radius.xxl,
+    gap: 8,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.32,
+    shadowRadius: 14,
+    elevation: 8,
   },
   quickActionLabel: {
-    fontSize: theme.typography.sizes.xs,
-    fontWeight: theme.typography.weights.medium,
-    color: theme.colors.textSecondary,
+    fontSize: 11.5,
+    fontWeight: theme.typography.weights.bold,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.15)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   horizontalList: {
     gap: 12,
@@ -593,33 +750,30 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     alignItems: 'center',
-    width: 88,
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.sm,
-    borderRadius: theme.radius.large,
-    borderWidth: 1,
+    justifyContent: 'center',
+    width: 96,
+    height: 108,
+    gap: 8,
+    borderRadius: theme.radius.xxl,
+    borderWidth: 2,
     borderColor: 'transparent',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.32,
+    shadowRadius: 14,
+    elevation: 8,
   },
   categoryCardActive: {
-    borderColor: 'transparent',
-    ...theme.shadows.sm,
-  },
-  categoryIconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: theme.radius.medium,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
+    borderColor: 'rgba(255,255,255,0.85)',
+    shadowOpacity: 0.45,
   },
   categoryLabel: {
     fontSize: theme.typography.sizes.xs,
-    fontWeight: theme.typography.weights.semiBold,
-    color: theme.colors.text,
+    fontWeight: theme.typography.weights.bold,
+    color: '#FFFFFF',
     textAlign: 'center',
-  },
-  categoryLabelActive: {
-    color: '#FFF',
+    textShadowColor: 'rgba(0,0,0,0.15)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   loadingState: {
     paddingVertical: theme.spacing.xxl,
@@ -648,7 +802,7 @@ const styles = StyleSheet.create({
   },
   spotlightList: {
     backgroundColor: theme.colors.card,
-    borderRadius: theme.radius.large,
+    borderRadius: theme.radius.xl,
     borderWidth: 1,
     borderColor: theme.colors.border,
     overflow: 'hidden',
@@ -700,7 +854,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.colors.smartCartBackground,
-    borderRadius: theme.radius.large,
+    borderRadius: theme.radius.xl,
     padding: theme.spacing.lg,
     borderWidth: 1,
     borderColor: '#BBF7D0',
