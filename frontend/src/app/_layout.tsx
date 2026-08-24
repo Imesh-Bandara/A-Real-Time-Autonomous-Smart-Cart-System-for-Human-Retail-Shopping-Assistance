@@ -9,6 +9,7 @@ export default function RootLayout() {
       <CartProvider>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
+          <Stack.Screen name="onboarding" />
           <Stack.Screen name="(customer)" />
           <Stack.Screen name="(admin)" />
         </Stack>

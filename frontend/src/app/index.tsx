@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loginUser, setAuthToken } from '../api/apiService';
 import { theme } from '../theme/theme';
 import { Input } from '../components/ui/Input';
@@ -30,25 +31,36 @@ export default function LoginScreen() {
   const progressAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    progressAnim.addListener(({ value }) => {
-      setPercent(Math.floor(value));
+    let cancelled = false;
+
+    AsyncStorage.getItem('hasOnboarded').then((value) => {
+      if (cancelled) return;
+
+      if (!value) {
+        router.replace('/onboarding');
+        return;
+      }
+
+      progressAnim.addListener(({ value }) => {
+        setPercent(Math.floor(value));
+      });
+
+      // Animate the progress bar over 2.5 seconds
+      Animated.timing(progressAnim, {
+        toValue: 100,
+        duration: 2500,
+        useNativeDriver: false,
+      }).start();
+
+      // Hide splash screen after 3 seconds
+      setTimeout(() => {
+        if (!cancelled) setIsSplashVisible(false);
+      }, 3000);
     });
 
-    // Animate the progress bar over 2.5 seconds
-    Animated.timing(progressAnim, {
-      toValue: 100,
-      duration: 2500,
-      useNativeDriver: false,
-    }).start();
-
-    // Hide splash screen after 3 seconds
-    const timer = setTimeout(() => {
-      setIsSplashVisible(false);
-    }, 3000);
-
     return () => {
+      cancelled = true;
       progressAnim.removeAllListeners();
-      clearTimeout(timer);
     };
   }, []);
 

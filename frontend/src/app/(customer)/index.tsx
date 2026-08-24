@@ -9,20 +9,16 @@ import {
   ActivityIndicator,
   Platform,
   TextInput,
-  Pressable,
   NativeSyntheticEvent,
   NativeScrollEvent,
   useWindowDimensions,
+  Modal,
+  Pressable,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import Animated, {
-  FadeInDown,
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from 'react-native-reanimated';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { theme } from '../../theme/theme';
 import { fetchProducts, Product } from '../../api/apiService';
 import { ProductGridCard } from '../../components/home/ProductGridCard';
@@ -54,18 +50,19 @@ const PROMO_SLIDES = [
 ];
 
 const CATEGORIES = [
-  { label: 'Fruits', icon: 'nutrition' as const, color: '#FF9F5A', bg: '#FFF1E6' },
-  { label: 'Vegetables', icon: 'leaf' as const, color: '#2ECC9B', bg: '#E8FBF4' },
-  { label: 'Dairy', icon: 'water' as const, color: '#38C6E8', bg: '#E8F9FE' },
+  { label: 'Fruits & Vegetables', icon: 'nutrition' as const, color: '#FF9F5A', bg: '#FFF1E6' },
+  { label: 'Meat & Seafood', icon: 'fish' as const, color: '#F5677D', bg: '#FEEBEE' },
+  { label: 'Dairy & Eggs', icon: 'water' as const, color: '#38C6E8', bg: '#E8F9FE' },
+  { label: 'Bakery', icon: 'pizza' as const, color: '#D98E4A', bg: '#FBF0E4' },
+  { label: 'Grocery', icon: 'basket' as const, color: '#2ECC9B', bg: '#E8FBF4' },
   { label: 'Snacks', icon: 'fast-food' as const, color: '#F5677D', bg: '#FEEBEE' },
   { label: 'Beverages', icon: 'wine' as const, color: '#B478E8', bg: '#F5EBFE' },
-];
-
-const QUICK_ACTIONS = [
-  { label: 'Shop', icon: 'storefront' as const, route: '/(customer)/shop', bg: '#22BFAE' },
-  { label: 'Cart', icon: 'cart' as const, route: '/(customer)/cart', bg: '#9B72E8' },
-  { label: 'Orders', icon: 'receipt' as const, route: '/(customer)/orders', bg: '#F7B84B' },
-  { label: 'Profile', icon: 'person' as const, route: '/(customer)/profile', bg: '#4CC2F1' },
+  { label: 'Frozen', icon: 'snow' as const, color: '#4FA3E3', bg: '#E7F3FD' },
+  { label: 'Personal Care', icon: 'body' as const, color: '#2EC4B6', bg: '#E5FAF8' },
+  { label: 'Household', icon: 'home' as const, color: '#6D5BD0', bg: '#EEEBFA' },
+  { label: 'Baby', icon: 'happy' as const, color: '#F4B740', bg: '#FEF6E4' },
+  { label: 'Pet Care', icon: 'paw' as const, color: '#A9744F', bg: '#F5EEE7' },
+  { label: 'Health & Wellness', icon: 'medkit' as const, color: '#E85D5D', bg: '#FDEAEA' },
 ];
 
 const SPOTLIGHT_COLORS = ['#002583', '#DB2777', '#0284C7'];
@@ -98,38 +95,6 @@ function SectionHeader({
   );
 }
 
-function QuickActionItem({
-  action,
-  onPress,
-}: {
-  action: (typeof QUICK_ACTIONS)[number];
-  onPress: () => void;
-}) {
-  const scale = useSharedValue(1);
-  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
-
-  return (
-    <Animated.View style={[styles.quickActionTile, animStyle]}>
-      <Pressable
-        style={[
-          styles.quickActionTouch,
-          { backgroundColor: action.bg, shadowColor: action.bg },
-        ]}
-        onPress={onPress}
-        onPressIn={() => {
-          scale.value = withSpring(0.92, { damping: 12, stiffness: 300 });
-        }}
-        onPressOut={() => {
-          scale.value = withSpring(1, { damping: 12, stiffness: 300 });
-        }}
-      >
-        <Ionicons name={action.icon} size={26} color="#FFFFFF" />
-        <Text style={styles.quickActionLabel}>{action.label}</Text>
-      </Pressable>
-    </Animated.View>
-  );
-}
-
 export default function CustomerHome() {
   const router = useRouter();
   const { width: windowWidth } = useWindowDimensions();
@@ -142,6 +107,7 @@ export default function CustomerHome() {
   const promoScrollRef = useRef<ScrollView>(null);
   const [shopFilters, setShopFilters] = useState<ShopFilters>(DEFAULT_FILTERS);
   const [filterSheetVisible, setFilterSheetVisible] = useState(false);
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -297,23 +263,9 @@ export default function CustomerHome() {
             </View>
           </Animated.View>
 
-          {/* Quick actions */}
-          <Animated.View entering={FadeInDown.delay(160).duration(450)} style={styles.block}>
-            <SectionHeader overline="NAVIGATE" title="Quick access" />
-            <View style={styles.quickActionsRow}>
-              {QUICK_ACTIONS.map((action) => (
-                <QuickActionItem
-                  key={action.label}
-                  action={action}
-                  onPress={() => router.push(action.route as any)}
-                />
-              ))}
-            </View>
-          </Animated.View>
-
           {/* Categories */}
           <Animated.View entering={FadeInDown.delay(200).duration(450)} style={styles.block}>
-            <SectionHeader title="Category" onSeeAll={goToShop} />
+            <SectionHeader title="Category" onSeeAll={() => setCategoryModalVisible(true)} />
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -450,6 +402,66 @@ export default function CustomerHome() {
         filters={shopFilters}
         onApply={setShopFilters}
       />
+
+      <Modal
+        visible={categoryModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setCategoryModalVisible(false)}
+      >
+        <View style={styles.categoryBackdrop}>
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={() => setCategoryModalVisible(false)}
+          />
+
+          <View style={styles.categorySheet}>
+            <View style={styles.categorySheetHandle} />
+
+            <View style={styles.categorySheetHeader}>
+              <Text style={styles.categorySheetTitle}>All Categories</Text>
+              <TouchableOpacity
+                style={styles.categorySheetCloseBtn}
+                activeOpacity={0.75}
+                onPress={() => setCategoryModalVisible(false)}
+              >
+                <Ionicons name="close" size={18} color={theme.colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.categoryGrid}
+            >
+              {CATEGORIES.map((cat) => {
+                const isSelected = selectedCategory === cat.label;
+                return (
+                  <TouchableOpacity
+                    key={cat.label}
+                    style={styles.categoryGridItem}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      setSelectedCategory(isSelected ? null : cat.label);
+                      setCategoryModalVisible(false);
+                    }}
+                  >
+                    <View
+                      style={[
+                        styles.categoryCircle,
+                        { backgroundColor: cat.bg },
+                        isSelected && { borderColor: cat.color },
+                      ]}
+                    >
+                      <Ionicons name={cat.icon} size={26} color={cat.color} />
+                    </View>
+                    <Text style={styles.categoryGridLabel}>{cat.label}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -709,34 +721,6 @@ const styles = StyleSheet.create({
     fontWeight: theme.typography.weights.medium,
     color: theme.colors.primary,
   },
-  quickActionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 10,
-  },
-  quickActionTile: {
-    flex: 1,
-  },
-  quickActionTouch: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    aspectRatio: 1,
-    borderRadius: theme.radius.xxl,
-    gap: 8,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.32,
-    shadowRadius: 14,
-    elevation: 8,
-  },
-  quickActionLabel: {
-    fontSize: 11.5,
-    fontWeight: theme.typography.weights.bold,
-    color: '#FFFFFF',
-    textAlign: 'center',
-    textShadowColor: 'rgba(0,0,0,0.15)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
   horizontalList: {
     gap: 18,
     paddingVertical: 4,
@@ -756,6 +740,68 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   categoryLabel: {
+    fontSize: theme.typography.sizes.xs,
+    fontWeight: theme.typography.weights.medium,
+    color: theme.colors.text,
+    textAlign: 'center',
+  },
+  categoryBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(15,23,42,0.45)',
+    justifyContent: 'flex-end',
+  },
+  categorySheet: {
+    backgroundColor: theme.colors.card,
+    borderTopLeftRadius: theme.radius.xxl,
+    borderTopRightRadius: theme.radius.xxl,
+    maxHeight: '75%',
+    paddingTop: 10,
+    paddingBottom: Platform.OS === 'ios' ? 30 : theme.spacing.lg,
+    ...theme.shadows.lg,
+  },
+  categorySheetHandle: {
+    alignSelf: 'center',
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: theme.colors.border,
+    marginBottom: theme.spacing.sm,
+  },
+  categorySheetHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: theme.spacing.lg,
+    paddingBottom: theme.spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.borderLight,
+  },
+  categorySheetTitle: {
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text,
+  },
+  categorySheetCloseBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: theme.radius.pill,
+    backgroundColor: theme.colors.background,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.md,
+    rowGap: 18,
+  },
+  categoryGridItem: {
+    alignItems: 'center',
+    width: '25%',
+    paddingHorizontal: 4,
+  },
+  categoryGridLabel: {
     fontSize: theme.typography.sizes.xs,
     fontWeight: theme.typography.weights.medium,
     color: theme.colors.text,
