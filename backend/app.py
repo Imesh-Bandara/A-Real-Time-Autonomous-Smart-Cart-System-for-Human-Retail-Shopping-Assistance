@@ -2,6 +2,7 @@ import os
 import uuid
 import json
 import logging
+import requests
 from datetime import datetime, timezone, timedelta
 from flask import Flask, jsonify, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
@@ -28,6 +29,27 @@ jwt = JWTManager(app)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+def load_env_file(path):
+    """Load key=value pairs from a .env file without overriding existing env vars."""
+    if not os.path.exists(path):
+        return
+
+    with open(path, 'r', encoding='utf-8') as env_file:
+        for raw_line in env_file:
+            line = raw_line.strip()
+            if not line or line.startswith('#') or '=' not in line:
+                continue
+
+            key, value = line.split('=', 1)
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if key and key not in os.environ:
+                os.environ[key] = value
+
+
+load_env_file(os.path.join(os.path.dirname(__file__), '.env'))
 
 
 def allowed_file(filename):
@@ -76,6 +98,9 @@ class User(db.Model):
     password = db.Column(db.String(120), nullable=False)
     role = db.Column(db.String(20), nullable=False)
     name = db.Column(db.String(120), nullable=True)
+    google_id = db.Column(db.String(120), unique=True, nullable=True)
+    auth_provider = db.Column(db.String(20), nullable=False, default='local')
+    profile_image = db.Column(db.Text, nullable=True)
     orders = db.relationship('Order', backref='user', lazy=True)
 
     def to_dict(self):
@@ -84,6 +109,9 @@ class User(db.Model):
             'email': self.email,
             'name': self.name,
             'role': self.role,
+            'google_id': self.google_id,
+            'auth_provider': self.auth_provider,
+            'profile_image': self.profile_image,
         }
 
 
@@ -205,6 +233,9 @@ def migrate_db():
         columns = [col['name'] for col in inspector.get_columns('user')]
         user_migrations = {
             'name': 'ALTER TABLE user ADD COLUMN name VARCHAR(120)',
+            'google_id': 'ALTER TABLE user ADD COLUMN google_id VARCHAR(120)',
+            'auth_provider': 'ALTER TABLE user ADD COLUMN auth_provider VARCHAR(20) DEFAULT \'local\'',
+            'profile_image': 'ALTER TABLE user ADD COLUMN profile_image TEXT',
         }
         for column, sql in user_migrations.items():
             if column not in columns:
@@ -258,14 +289,192 @@ def serve_product_image(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 
+@app.route('/api/auth/google/config', methods=['GET'])
+def google_auth_config():
+    client_id = os.environ.get('GOOGLE_CLIENT_ID')
+    redirect_uri = os.environ.get('GOOGLE_REDIRECT_URI')
+
+    if not client_id or not redirect_uri:
+        return jsonify({"msg": "Google auth is misconfigured on backend"}), 500
+
+    return jsonify({
+        "client_id": client_id,
+        "redirect_uri": redirect_uri,
+    }), 200
+
+
+@app.route('/api/auth/google', methods=['POST'])
+def google_auth():
+    data = request.get_json() or {}
+    code = data.get('code')
+    target_role = data.get('role', 'customer')  # 'customer' or 'admin'
+
+    if target_role not in ('customer', 'admin'):
+        return jsonify({"msg": "Invalid role"}), 400
+    
+    if not code:
+        return jsonify({"msg": "Missing code"}), 400
+        
+    client_id = os.environ.get('GOOGLE_CLIENT_ID')
+    client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
+    redirect_uri = os.environ.get('GOOGLE_REDIRECT_URI')
+    
+    if not client_id or not client_secret or not redirect_uri:
+        logger.error("[Google Auth] Missing Google environment variables.")
+        return jsonify({"msg": "Google auth is misconfigured on backend"}), 500
+        
+    try:
+        # Exchange code for tokens
+        token_url = "https://oauth2.googleapis.com/token"
+        token_data = {
+            "code": code,
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "redirect_uri": redirect_uri,
+            "grant_type": "authorization_code"
+        }
+        token_res = requests.post(token_url, data=token_data, timeout=10)
+        if token_res.status_code != 200:
+            logger.error(f"[Google Auth] Failed to exchange code. Response: {token_res.text}")
+            return jsonify({"msg": "failed"}), 400
+            
+        token_json = token_res.json()
+        id_token = token_json.get("id_token")
+        
+        if not id_token:
+            logger.error("[Google Auth] id_token missing in Google response")
+            return jsonify({"msg": "failed"}), 400
+            
+        # Verify the ID token using Google tokeninfo API
+        verify_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={id_token}"
+        verify_res = requests.get(verify_url, timeout=10)
+        if verify_res.status_code != 200:
+            logger.error(f"[Google Auth] Token verification failed. Response: {verify_res.text}")
+            return jsonify({"msg": "failed"}), 400
+            
+        user_info = verify_res.json()
+        
+        # Verify audience matches client ID
+        aud = user_info.get("aud")
+        if aud != client_id:
+            logger.error(f"[Google Auth] Audience mismatch: {aud} != {client_id}")
+            return jsonify({"msg": "failed"}), 400
+
+        issuer = user_info.get("iss")
+        if issuer not in ('accounts.google.com', 'https://accounts.google.com'):
+            logger.error(f"[Google Auth] Invalid token issuer: {issuer}")
+            return jsonify({"msg": "failed"}), 400
+            
+        google_id = user_info.get("sub")
+        email = user_info.get("email")
+        name = user_info.get("name")
+        picture = user_info.get("picture")
+        email_verified = str(user_info.get("email_verified", "")).lower() == 'true'
+        
+        if not email or not google_id or not email_verified:
+            logger.error("[Google Auth] Missing or unverified account information")
+            return jsonify({"msg": "failed"}), 400
+
+        existing_by_google = User.query.filter_by(google_id=google_id).first()
+        existing_by_email = User.query.filter_by(email=email).first()
+        if existing_by_google and existing_by_email and existing_by_google.id != existing_by_email.id:
+            logger.error(f"[Google Auth] Account conflict for email={email}")
+            return jsonify({"msg": "failed"}), 409
+
+        user = existing_by_google or existing_by_email
+            
+        # Admin authorization check
+        if target_role == 'admin':
+            authorized_emails = os.environ.get('AUTHORIZED_ADMIN_EMAILS', '')
+            authorized_list = [e.strip().lower() for e in authorized_emails.split(',') if e.strip()]
+            
+            is_authorized = (user and user.role == 'admin') or (email.lower() in authorized_list)
+            
+            if not is_authorized:
+                logger.warning(f"[Google Auth] Unauthorized admin login attempt by {email}")
+                return jsonify({
+                    "msg": "This Google account is not authorized as an admin",
+                    "code": "admin_unauthorized"
+                }), 403
+                
+            # Create user if admin is authorized but does not exist in DB yet
+            if not user:
+                user = User(
+                    email=email,
+                    password=f"google-oauth-{uuid.uuid4().hex}",
+                    role="admin",
+                    name=name,
+                    google_id=google_id,
+                    auth_provider="google",
+                    profile_image=picture
+                )
+                db.session.add(user)
+            else:
+                # Update existing user info
+                user.role = "admin"
+        else:
+            # Customer Flow
+            if not user:
+                # Auto-create customer user account
+                user = User(
+                    email=email,
+                    password=f"google-oauth-{uuid.uuid4().hex}",
+                    role="customer",
+                    name=name,
+                    google_id=google_id,
+                    auth_provider="google",
+                    profile_image=picture
+                )
+                db.session.add(user)
+
+        # Update existing user's Google profile fields when available.
+        user.google_id = google_id
+        user.auth_provider = "google"
+        if name:
+            user.name = name
+        if picture:
+            user.profile_image = picture
+        db.session.commit()
+                
+        # Create JWT access token
+        access_token = create_access_token(
+            identity=str(user.id),
+            additional_claims={"role": user.role, "email": user.email}
+        )
+        
+        return jsonify(
+            access_token=access_token,
+            role=user.role,
+            email=user.email,
+            name=user.name,
+            profile_image=user.profile_image
+        ), 200
+        
+    except requests.RequestException:
+        logger.exception("[Google Auth] Network exception during authentication")
+        return jsonify({"msg": "failed"}), 502
+    except Exception:
+        logger.exception("[Google Auth] Exception during authentication")
+        return jsonify({"msg": "unknown"}), 500
+
+
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json() or {}
     email = data.get('email')
     password = data.get('password')
+    expected_role = data.get('expected_role')
+
+    if expected_role and expected_role not in ('admin', 'customer'):
+        return jsonify({"msg": "Invalid expected role"}), 400
+
     user = User.query.filter_by(email=email, password=password).first()
     if not user:
         return jsonify({"msg": "Invalid credentials"}), 401
+
+    if expected_role == 'admin' and user.role != 'admin':
+        return jsonify({"msg": "This account is not authorized as an admin."}), 403
+
     access_token = create_access_token(
         identity=str(user.id),
         additional_claims={"role": user.role, "email": user.email}
@@ -636,4 +845,4 @@ def admin_get_orders():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5001)

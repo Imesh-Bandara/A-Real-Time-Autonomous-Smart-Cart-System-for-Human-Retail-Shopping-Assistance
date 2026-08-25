@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,12 +7,9 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Alert,
-  Image,
-  Animated,
   TouchableOpacity,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Linking from 'expo-linking';
 import { fetchGoogleOAuthConfig, loginUser, loginWithGoogle, setAuthToken } from '../api/apiService';
 import { theme } from '../theme/theme';
@@ -20,7 +17,7 @@ import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function LoginScreen() {
+export default function AdminLoginScreen() {
   const router = useRouter();
   const { error } = useLocalSearchParams<{ error?: string }>();
   const [email, setEmail] = useState('');
@@ -28,8 +25,6 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [googleError, setGoogleError] = useState<string | null>(null);
-  const [isSplashVisible, setIsSplashVisible] = useState(true);
-  const [percent, setPercent] = useState(0);
 
   const routeGoogleError = (() => {
     if (error === 'admin_unauthorized') return 'This Google account is not authorized as an admin.';
@@ -49,10 +44,37 @@ export default function LoginScreen() {
   };
 
   useEffect(() => {
-    if (routeGoogleError && !isSplashVisible) {
+    if (routeGoogleError) {
       showAlert('Authentication Error', routeGoogleError);
     }
-  }, [routeGoogleError, isSplashVisible]);
+  }, [routeGoogleError]);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      showAlert('Error', 'Please enter your email and password.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const data = await loginUser(email, password, 'admin');
+      
+      if (data.access_token) {
+        setAuthToken(data.access_token);
+      }
+
+      if (data.role === 'admin') {
+        router.replace('/(admin)');
+      } else {
+        setAuthToken(null);
+        showAlert('Access Denied', 'This account is not authorized as an admin.');
+      }
+    } catch (err: any) {
+      showAlert('Login Error', typeof err === 'string' ? err : JSON.stringify(err));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoogleLogin = async () => {
     let clientId = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID;
@@ -81,7 +103,7 @@ export default function LoginScreen() {
       `&redirect_uri=${encodeURIComponent(redirectUri)}` +
       `&response_type=code` +
       `&scope=${encodeURIComponent('openid profile email')}` +
-      `&state=customer`;
+      `&state=admin`;
 
     try {
       if (Platform.OS === 'web') {
@@ -104,16 +126,22 @@ export default function LoginScreen() {
         throw new Error('failed');
       }
 
-      const data = await loginWithGoogle(code, 'customer');
+      const data = await loginWithGoogle(code, 'admin');
       if (data.access_token) {
         setAuthToken(data.access_token);
       }
 
-      router.replace('/(customer)');
+      if (data.role !== 'admin') {
+        throw new Error('admin_unauthorized');
+      }
+
+      router.replace('/(admin)');
     } catch (err: any) {
       const errStr = typeof err === 'string' ? err : (err?.message || JSON.stringify(err));
       let message = 'Something went wrong. Please try again.';
-      if (errStr.includes('failed') || errStr.includes('cancelled')) {
+      if (errStr.includes('admin_unauthorized') || errStr.includes('not authorized as an admin')) {
+        message = 'This Google account is not authorized as an admin';
+      } else if (errStr.includes('failed') || errStr.includes('cancelled')) {
         message = 'Google authentication failed';
       }
       setGoogleError(message);
@@ -122,113 +150,6 @@ export default function LoginScreen() {
       setGoogleLoading(false);
     }
   };
-  
-  // Animation value for the progress bar
-  const progressAnim = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    let cancelled = false;
-
-    AsyncStorage.getItem('hasOnboarded').then((value) => {
-      if (cancelled) return;
-
-      if (!value) {
-        router.replace('/onboarding');
-        return;
-      }
-
-      progressAnim.addListener(({ value }) => {
-        setPercent(Math.floor(value));
-      });
-
-      // Animate the progress bar over 2.5 seconds
-      Animated.timing(progressAnim, {
-        toValue: 100,
-        duration: 2500,
-        useNativeDriver: false,
-      }).start();
-
-      // Hide splash screen after 3 seconds
-      setTimeout(() => {
-        if (!cancelled) setIsSplashVisible(false);
-      }, 3000);
-    });
-
-    return () => {
-      cancelled = true;
-      progressAnim.removeAllListeners();
-    };
-  }, []);
-
-  const handleLogin = async () => {
-    if (!email || !password) {
-      showAlert('Error', 'Please enter your email and password.');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const data = await loginUser(email, password);
-      
-      // Store JWT token
-      if (data.access_token) {
-        setAuthToken(data.access_token);
-      }
-
-      if (data.role === 'admin') {
-        router.replace('/(admin)');
-      } else if (data.role === 'customer') {
-        router.replace('/(customer)');
-      } else {
-        showAlert('Error', `Unrecognized role: "${data.role}"`);
-      }
-    } catch (err: any) {
-      showAlert('Login Error', typeof err === 'string' ? err : JSON.stringify(err));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Demo helper for development
-  const fillDemo = (type: 'admin' | 'customer') => {
-    if (type === 'admin') {
-      setEmail('admin@test.com');
-      setPassword('admin123');
-    } else {
-      setEmail('user@test.com');
-      setPassword('user123');
-    }
-  };
-
-  if (isSplashVisible) {
-    const widthInterpolated = progressAnim.interpolate({
-      inputRange: [0, 100],
-      outputRange: ['0%', '100%'],
-    });
-
-    return (
-      <View style={styles.splashContainer}>
-        <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
-        
-        <View style={styles.splashContent}>
-          <Image 
-            source={require('../../images/logo.png')} 
-            style={styles.splashLogo} 
-            resizeMode="contain"
-          />
-          <Text style={styles.splashTitle}>Smart Cart</Text>
-          <Text style={styles.splashSubtitle}>Smarter shopping. Simpler living.</Text>
-        </View>
-
-        <View style={styles.splashBottom}>
-          <Text style={styles.progressText}>{percent}%</Text>
-          <View style={styles.progressContainer}>
-            <Animated.View style={[styles.progressBar, { width: widthInterpolated }]} />
-          </View>
-        </View>
-      </View>
-    );
-  }
 
   return (
     <KeyboardAvoidingView
@@ -240,16 +161,16 @@ export default function LoginScreen() {
       <View style={styles.content}>
         <View style={styles.header}>
           <View style={styles.logoCircle}>
-            <Ionicons name="cart-outline" size={40} color="#FFFFFF" />
+            <Ionicons name="shield-checkmark-outline" size={40} color="#FFFFFF" />
           </View>
-          <Text style={styles.title}>Smart Cart</Text>
-          <Text style={styles.subtitle}>Smarter shopping. Simpler living.</Text>
+          <Text style={styles.title}>Admin Console</Text>
+          <Text style={styles.subtitle}>Manage smart carts and store inventory.</Text>
         </View>
 
         <View style={styles.formCard}>
           <Input
-            label="Email Address"
-            placeholder="Enter your email"
+            label="Admin Email"
+            placeholder="admin@store.com"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -264,10 +185,8 @@ export default function LoginScreen() {
             secureTextEntry
           />
 
-          <Text style={styles.forgotPassword}>Forgot password?</Text>
-
           <Button
-            title="Sign In"
+            title="Sign In as Admin"
             onPress={handleLogin}
             loading={loading}
             style={styles.loginBtn}
@@ -289,26 +208,10 @@ export default function LoginScreen() {
 
           {effectiveGoogleError ? <Text style={styles.googleErrorText}>{effectiveGoogleError}</Text> : null}
 
-          <Text style={styles.registerText}>
-            Don't have an account? <Text style={styles.registerLink}>Create one</Text>
-          </Text>
-
-          <TouchableOpacity style={styles.adminPortalLink} onPress={() => router.push('/admin-login')} activeOpacity={0.7}>
-            <Text style={styles.adminPortalLinkText}>Are you an Admin? Go to Admin Portal</Text>
+          <TouchableOpacity style={styles.portalLink} onPress={() => router.push('/')} activeOpacity={0.7}>
+            <Text style={styles.portalLinkText}>Not an Admin? Go to Customer Login</Text>
           </TouchableOpacity>
         </View>
-
-        {/* Development Demo Login Helpers */}
-        {__DEV__ && (
-          <View style={styles.devBox}>
-            <Text style={styles.devTitle}>DEV: Quick Login</Text>
-            <View style={styles.devButtons}>
-              <Button title="Admin" variant="outline" size="small" onPress={() => fillDemo('admin')} />
-              <View style={{ width: 10 }} />
-              <Button title="Customer" variant="outline" size="small" onPress={() => fillDemo('customer')} />
-            </View>
-          </View>
-        )}
       </View>
     </KeyboardAvoidingView>
   );
@@ -318,60 +221,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
-  },
-  splashContainer: {
-    flex: 1,
-    backgroundColor: theme.colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  splashContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    marginTop: 40,
-  },
-  splashLogo: {
-    width: 120,
-    height: 120,
-    marginBottom: theme.spacing.lg,
-  },
-  splashTitle: {
-    fontSize: theme.typography.sizes.xxxl,
-    fontWeight: theme.typography.weights.heavy,
-    color: '#FFFFFF',
-    letterSpacing: -0.5,
-    marginBottom: 4,
-  },
-  splashSubtitle: {
-    fontSize: theme.typography.sizes.md,
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontWeight: theme.typography.weights.medium,
-  },
-  splashBottom: {
-    alignItems: 'center',
-    width: '100%',
-    paddingBottom: 60,
-  },
-  progressText: {
-    fontSize: theme.typography.sizes.lg,
-    fontWeight: theme.typography.weights.bold,
-    color: '#FFFFFF',
-    marginBottom: 12,
-  },
-  progressContainer: {
-    width: '60%',
-    height: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 3,
-    overflow: 'hidden',
-    marginBottom: 20,
-  },
-  progressBar: {
-    height: '100%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 3,
   },
   content: {
     flex: 1,
@@ -389,7 +238,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: '#002583',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: theme.spacing.md,
@@ -406,6 +255,7 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.md,
     color: theme.colors.textSecondary,
     fontWeight: theme.typography.weights.medium,
+    textAlign: 'center',
   },
   formCard: {
     backgroundColor: theme.colors.card,
@@ -413,25 +263,9 @@ const styles = StyleSheet.create({
     padding: theme.spacing.xl,
     ...theme.shadows.lg,
   },
-  forgotPassword: {
-    color: theme.colors.primary,
-    fontSize: theme.typography.sizes.sm,
-    fontWeight: theme.typography.weights.semiBold,
-    textAlign: 'right',
-    marginTop: -theme.spacing.sm,
-    marginBottom: theme.spacing.lg,
-  },
   loginBtn: {
+    marginTop: theme.spacing.md,
     marginBottom: theme.spacing.lg,
-  },
-  registerText: {
-    textAlign: 'center',
-    color: theme.colors.textSecondary,
-    fontSize: theme.typography.sizes.sm,
-  },
-  registerLink: {
-    color: theme.colors.primary,
-    fontWeight: theme.typography.weights.bold,
   },
   dividerContainer: {
     flexDirection: 'row',
@@ -459,25 +293,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: theme.spacing.sm,
   },
-  adminPortalLink: {
+  portalLink: {
     marginTop: theme.spacing.md,
     alignItems: 'center',
   },
-  adminPortalLinkText: {
+  portalLinkText: {
     color: theme.colors.textSecondary,
     fontSize: theme.typography.sizes.sm,
     textDecorationLine: 'underline',
-  },
-  devBox: {
-    marginTop: 40,
-    alignItems: 'center',
-  },
-  devTitle: {
-    color: theme.colors.textMuted,
-    fontSize: 12,
-    marginBottom: 8,
-  },
-  devButtons: {
-    flexDirection: 'row',
   },
 });

@@ -3,8 +3,8 @@ import { Platform } from 'react-native';
 import { router } from 'expo-router';
 
 // IMPORTANT: If testing on a physical phone via Expo Go, replace 127.0.0.1
-// with your computer's local IP address (e.g., 'http://192.168.1.X:5000')
-export const API_BASE_URL = 'http://127.0.0.1:5000';
+// with your computer's local IP address (e.g., 'http://192.168.1.X:5001')
+export const API_BASE_URL = 'http://127.0.0.1:5001';
 
 // ---------------------------------------------------------------------------
 // JWT token management — stored in memory (no async-storage dependency)
@@ -122,6 +122,7 @@ export interface CreateOrderPayload {
 interface ApiErrorResponse {
   msg?: string;
   message?: string;
+  code?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -167,12 +168,34 @@ const appendImageToFormData = async (formData: FormData, productData: ProductPay
 // ---------------------------------------------------------------------------
 // Auth
 // ---------------------------------------------------------------------------
-export const loginUser = async (email: string, password: string) => {
+export const loginUser = async (
+  email: string,
+  password: string,
+  expectedRole?: 'admin' | 'customer'
+) => {
   try {
-    const response = await api.post('/api/login', { email, password });
+    const response = await api.post('/api/login', { email, password, expected_role: expectedRole });
     return response.data;
   } catch (error) {
     throw getErrorMessage(error, 'Network error while logging in.');
+  }
+};
+
+export const loginWithGoogle = async (code: string, role: string) => {
+  try {
+    const response = await api.post('/api/auth/google', { code, role });
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Google authentication failed.');
+  }
+};
+
+export const fetchGoogleOAuthConfig = async (): Promise<{ client_id: string; redirect_uri: string }> => {
+  try {
+    const response = await api.get('/api/auth/google/config');
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Google OAuth is not configured.');
   }
 };
 

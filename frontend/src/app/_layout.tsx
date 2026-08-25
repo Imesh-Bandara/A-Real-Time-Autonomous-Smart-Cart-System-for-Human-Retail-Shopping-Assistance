@@ -10,6 +10,8 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="onboarding" />
+          <Stack.Screen name="admin-login" />
+          <Stack.Screen name="google-callback" />
           <Stack.Screen name="(customer)" />
           <Stack.Screen name="(admin)" />
         </Stack>
