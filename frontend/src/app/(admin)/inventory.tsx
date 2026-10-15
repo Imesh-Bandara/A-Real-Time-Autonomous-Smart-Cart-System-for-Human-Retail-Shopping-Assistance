@@ -11,12 +11,24 @@ import {
   Image,
   ActivityIndicator,
   TextInput,
+  ScrollView,
+  Modal,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
 
+import { useRouter, useNavigation } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { fetchProducts, addProduct, deleteProduct, getImageUrl, Product } from '../../api/apiService';
+import {
+  fetchProducts,
+  addProduct,
+  deleteProduct,
+  getImageUrl,
+  fetchShelves,
+  assignProductShelf,
+  Product,
+  Shelf,
+} from '../../api/apiService';
 import { theme } from '../../theme/theme';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -24,19 +36,32 @@ import { StatusBadge } from '../../components/ui/StatusBadge';
 import { AdminSectionHeader } from '../../components/admin/AdminSectionHeader';
 
 export default function AdminInventory() {
+  const router = useRouter();
+  const navigation = useNavigation();
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [shelves, setShelves] = useState<Shelf[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Add Product Form State
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState('');
+  const [selectedShelfId, setSelectedShelfId] = useState('');
+  const [selectedSection, setSelectedSection] = useState<number>(1);
   const [description, setDescription] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [imageName, setImageName] = useState<string | null>(null);
   const [imageType, setImageType] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
+
+  // Edit Product Shelf Location State
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editShelfId, setEditShelfId] = useState<string>('');
+  const [editSection, setEditSection] = useState<number>(1);
+  const [isSavingLocation, setIsSavingLocation] = useState(false);
 
   const showAlert = (title: string, msg: string) => {
     Platform.OS === 'web' ? alert(`${title}: ${msg}`) : Alert.alert(title, msg);
@@ -46,6 +71,8 @@ export default function AdminInventory() {
     setName('');
     setPrice('');
     setStock('');
+    setSelectedShelfId('');
+    setSelectedSection(1);
     setDescription('');
     setImageUri(null);
     setImageName(null);
@@ -56,8 +83,14 @@ export default function AdminInventory() {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const data = await fetchProducts();
-      setProducts(data);
+      const [productsData, shelvesData] = await Promise.all([
+        fetchProducts(),
+        fetchShelves(false).catch(() => []),
+      ]);
+      setProducts(productsData);
+      setShelves(shelvesData);
+    } catch (e: any) {
+      console.log('Failed to fetch catalog', e);
     } finally {
       setLoading(false);
     }
@@ -100,6 +133,8 @@ export default function AdminInventory() {
         name: name.trim(),
         price,
         stock,
+        shelf_id: selectedShelfId || null,
+        shelf_section: selectedShelfId ? selectedSection : null,
         description: description.trim() || null,
         imageUri,
         imageName,
@@ -110,6 +145,39 @@ export default function AdminInventory() {
       showAlert('Success', 'Product saved');
     } catch (e: any) {
       showAlert('Error', e.message || 'Failed to add product');
+    }
+  };
+
+  const handleOpenEditLocation = (product: Product) => {
+    setEditingProduct(product);
+    setEditShelfId(product.shelf_id || '');
+    setEditSection(product.shelf_section || 1);
+    setEditModalVisible(true);
+  };
+
+  const handleSaveLocation = async () => {
+    if (!editingProduct) return;
+    try {
+      setIsSavingLocation(true);
+      const res = await assignProductShelf(
+        editingProduct.id,
+        editShelfId || null,
+        editShelfId ? editSection : null
+      );
+      setProducts((prev) =>
+        prev.map((p) => (p.id === editingProduct.id ? res.product : p))
+      );
+      setEditModalVisible(false);
+      showAlert(
+        'Location Updated',
+        res.product.shelf_id
+          ? `${res.product.name} location updated to ${res.product.shelf_id} (Section ${res.product.shelf_section})`
+          : `${res.product.name} is now unassigned from shelves.`
+      );
+    } catch (e: any) {
+      showAlert('Error', e.message || 'Failed to update shelf location');
+    } finally {
+      setIsSavingLocation(false);
     }
   };
 
@@ -137,7 +205,7 @@ export default function AdminInventory() {
         <View style={styles.heroHeader}>
           <TouchableOpacity
             style={styles.menuBtn}
-            onPress={() => (navigation as any).openDrawer?.() || navigation.dispatch?.({ type: 'OPEN_DRAWER' })}
+            onPress={() => (navigation as any).openDrawer?.()}
             activeOpacity={0.8}
           >
             <Ionicons name="menu-outline" size={22} color="#FFF" />
@@ -166,6 +234,23 @@ export default function AdminInventory() {
             onChangeText={setSearchQuery}
           />
         </View>
+
+        <View style={styles.shelfLinkBanner}>
+          <View style={styles.shelfLinkLeft}>
+            <Ionicons name="layers" size={16} color="#C4B5FD" />
+            <Text style={styles.shelfLinkText}>
+              {shelves.length} shelves mapped with cart coordinates
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.shelfLinkBtn}
+            onPress={() => router.push('/(admin)/shelves')}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.shelfLinkBtnText}>Shelf & Map</Text>
+            <Ionicons name="arrow-forward" size={12} color="#FFF" />
+          </TouchableOpacity>
+        </View>
       </LinearGradient>
 
       <View style={styles.bodyContent}>
@@ -190,6 +275,72 @@ export default function AdminInventory() {
                 <Input label="Stock" value={stock} onChangeText={setStock} keyboardType="numeric" />
               </View>
             </View>
+
+            <Text style={styles.shelfSelectorLabel}>Assign Shelf Location</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.shelfChipsRow}
+            >
+              <TouchableOpacity
+                style={[styles.shelfChip, !selectedShelfId && styles.shelfChipActive]}
+                onPress={() => setSelectedShelfId('')}
+                activeOpacity={0.8}
+              >
+                <Text style={[styles.shelfChipText, !selectedShelfId && styles.shelfChipTextActive]}>
+                  Unassigned
+                </Text>
+              </TouchableOpacity>
+              {shelves.map((s) => {
+                const isActive = selectedShelfId === s.id;
+                return (
+                  <TouchableOpacity
+                    key={s.id}
+                    style={[styles.shelfChip, isActive && styles.shelfChipActive]}
+                    onPress={() => setSelectedShelfId(s.id)}
+                    activeOpacity={0.8}
+                  >
+                    <Ionicons
+                      name="layers"
+                      size={12}
+                      color={isActive ? '#FFF' : '#6366F1'}
+                      style={{ marginRight: 4 }}
+                    />
+                    <Text style={[styles.shelfChipText, isActive && styles.shelfChipTextActive]}>
+                      {s.id}: {s.name}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+
+            {selectedShelfId ? (
+              <View style={styles.sectionSelectWrap}>
+                <Text style={styles.shelfSelectorLabel}>
+                  Shelf Section (1 to 5)
+                </Text>
+                <View style={styles.sectionRow}>
+                  {[1, 2, 3, 4, 5].map((sec) => {
+                    const isSecActive = selectedSection === sec;
+                    return (
+                      <TouchableOpacity
+                        key={sec}
+                        style={[styles.sectionChip, isSecActive && styles.sectionChipActive]}
+                        onPress={() => setSelectedSection(sec)}
+                        activeOpacity={0.8}
+                      >
+                        <Text style={[styles.sectionChipNumber, isSecActive && styles.sectionChipNumberActive]}>
+                          {sec}
+                        </Text>
+                        <Text style={[styles.sectionChipLabel, isSecActive && styles.sectionChipLabelActive]}>
+                          Sec {sec}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </View>
+            ) : null}
 
             <Text style={styles.imageLabel}>Product image</Text>
             <TouchableOpacity style={styles.imagePicker} onPress={pickImage} activeOpacity={0.8}>
@@ -266,6 +417,33 @@ export default function AdminInventory() {
                 )}
                 <View style={styles.rowInfo}>
                   <Text style={styles.rowName}>{item.name}</Text>
+                  
+                  <TouchableOpacity
+                    style={item.shelf || item.shelf_id ? styles.shelfBadge : styles.shelfBadgeUnassigned}
+                    onPress={() => handleOpenEditLocation(item)}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons
+                      name="layers"
+                      size={11}
+                      color={item.shelf || item.shelf_id ? '#4F46E5' : '#D97706'}
+                    />
+                    <Text
+                      style={item.shelf || item.shelf_id ? styles.shelfBadgeText : styles.shelfBadgeTextUnassigned}
+                      numberOfLines={1}
+                    >
+                      {item.shelf_id
+                        ? `${item.shelf_id} • Sec ${item.shelf_section ?? 1}${item.shelf?.name ? ` (${item.shelf.name.replace(/Shelf [A-Z] - /, '')})` : ''}`
+                        : 'No shelf • Tap to set'}
+                    </Text>
+                    <Ionicons
+                      name="pencil"
+                      size={10}
+                      color={item.shelf || item.shelf_id ? '#6366F1' : '#D97706'}
+                      style={{ marginLeft: 3 }}
+                    />
+                  </TouchableOpacity>
+
                   {item.description ? (
                     <Text style={styles.rowDescription} numberOfLines={2}>
                       {item.description}
@@ -276,19 +454,205 @@ export default function AdminInventory() {
                 </View>
                 <View style={styles.rowActions}>
                   <Text style={styles.stockText}>{item.stock} units</Text>
-                  <TouchableOpacity
-                    style={styles.deleteBtn}
-                    onPress={() => handleDelete(item.id)}
-                    activeOpacity={0.75}
-                  >
-                    <Ionicons name="trash-outline" size={16} color={theme.colors.error} />
-                  </TouchableOpacity>
+                  <View style={styles.actionBtnRow}>
+                    <TouchableOpacity
+                      style={styles.editLocBtn}
+                      onPress={() => handleOpenEditLocation(item)}
+                      activeOpacity={0.75}
+                    >
+                      <Ionicons name="navigate-outline" size={13} color="#4F46E5" />
+                      <Text style={styles.editLocBtnText}>Shelf</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.deleteBtn}
+                      onPress={() => handleDelete(item.id)}
+                      activeOpacity={0.75}
+                    >
+                      <Ionicons name="trash-outline" size={14} color={theme.colors.error} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
             );
           }}
         />
       )}
+
+      {/* EDIT SHELF & SECTION MODAL */}
+      <Modal
+        visible={editModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setEditModalVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalSheet}>
+            <View style={styles.modalHeader}>
+              <View style={styles.modalHeaderTitleGroup}>
+                <View style={styles.modalIconWrap}>
+                  <Ionicons name="location" size={20} color="#4F46E5" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.modalTitle}>Edit Shelf Location</Text>
+                  <Text style={styles.modalSubtitle} numberOfLines={1}>
+                    {editingProduct?.name} (${editingProduct?.price?.toFixed(2)})
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                onPress={() => setEditModalVisible(false)}
+                style={styles.modalCloseBtn}
+              >
+                <Ionicons name="close" size={22} color={theme.colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.modalScroll} showsVerticalScrollIndicator={false}>
+              <Text style={styles.modalSectionLabel}>1. Select Physical Shelf</Text>
+              <View style={styles.shelfOptionsGrid}>
+                <TouchableOpacity
+                  style={[
+                    styles.shelfOptionCard,
+                    !editShelfId && styles.shelfOptionCardActive,
+                  ]}
+                  onPress={() => setEditShelfId('')}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons
+                    name="close-circle-outline"
+                    size={18}
+                    color={!editShelfId ? '#4F46E5' : theme.colors.textMuted}
+                  />
+                  <Text
+                    style={[
+                      styles.shelfOptionTitle,
+                      !editShelfId && styles.shelfOptionTitleActive,
+                    ]}
+                  >
+                    Unassigned
+                  </Text>
+                  <Text style={styles.shelfOptionSub}>No waypoint</Text>
+                </TouchableOpacity>
+
+                {shelves.map((s) => {
+                  const isSelected = editShelfId === s.id;
+                  return (
+                    <TouchableOpacity
+                      key={s.id}
+                      style={[
+                        styles.shelfOptionCard,
+                        isSelected && styles.shelfOptionCardActive,
+                      ]}
+                      onPress={() => setEditShelfId(s.id)}
+                      activeOpacity={0.8}
+                    >
+                      <Ionicons
+                        name="navigate"
+                        size={18}
+                        color={isSelected ? '#4F46E5' : '#6B7280'}
+                      />
+                      <Text
+                        style={[
+                          styles.shelfOptionTitle,
+                          isSelected && styles.shelfOptionTitleActive,
+                        ]}
+                      >
+                        {s.id}
+                      </Text>
+                      <Text style={styles.shelfOptionSub} numberOfLines={1}>
+                        {s.name.replace(/Shelf [A-Z] - /, '')}
+                      </Text>
+                      <Text style={styles.shelfOptionCoords}>
+                        ({s.x_coord}m, {s.y_coord}m)
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+
+              {editShelfId ? (
+                <View style={{ marginTop: 16 }}>
+                  <Text style={styles.modalSectionLabel}>
+                    2. Select Shelf Section (1 to 5)
+                  </Text>
+                  <Text style={styles.modalSectionHelp}>
+                    Each shelf is divided into 5 physical sections. The autonomous cart will guide the shopper directly to this section.
+                  </Text>
+                  <View style={styles.modalSectionsRow}>
+                    {[1, 2, 3, 4, 5].map((sec) => {
+                      const isSecSelected = editSection === sec;
+                      return (
+                        <TouchableOpacity
+                          key={sec}
+                          style={[
+                            styles.modalSecBox,
+                            isSecSelected && styles.modalSecBoxActive,
+                          ]}
+                          onPress={() => setEditSection(sec)}
+                          activeOpacity={0.8}
+                        >
+                          <View
+                            style={[
+                              styles.modalSecNumberCircle,
+                              isSecSelected && styles.modalSecNumberCircleActive,
+                            ]}
+                          >
+                            <Text
+                              style={[
+                                styles.modalSecNumber,
+                                isSecSelected && styles.modalSecNumberActive,
+                              ]}
+                            >
+                              {sec}
+                            </Text>
+                          </View>
+                          <Text
+                            style={[
+                              styles.modalSecTitle,
+                              isSecSelected && styles.modalSecTitleActive,
+                            ]}
+                          >
+                            Sec {sec}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </View>
+              ) : null}
+            </ScrollView>
+
+            <View style={styles.modalFooter}>
+              <TouchableOpacity
+                style={styles.modalCancelBtn}
+                onPress={() => setEditModalVisible(false)}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.modalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.modalSaveBtn,
+                  isSavingLocation && styles.modalSaveBtnDisabled,
+                ]}
+                onPress={handleSaveLocation}
+                disabled={isSavingLocation}
+                activeOpacity={0.85}
+              >
+                {isSavingLocation ? (
+                  <ActivityIndicator size="small" color="#FFF" />
+                ) : (
+                  <>
+                    <Ionicons name="checkmark-sharp" size={18} color="#FFF" style={{ marginRight: 6 }} />
+                    <Text style={styles.modalSaveText}>Save Location</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -504,5 +868,366 @@ const styles = StyleSheet.create({
     color: theme.colors.textMuted,
     textAlign: 'center',
     lineHeight: 20,
+  },
+  shelfLinkBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: theme.radius.medium,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  shelfLinkLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flex: 1,
+  },
+  shelfLinkText: {
+    color: '#FFF',
+    fontSize: theme.typography.sizes.xs,
+    fontWeight: theme.typography.weights.medium,
+  },
+  shelfLinkBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#8B5CF6',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: theme.radius.pill,
+    gap: 4,
+  },
+  shelfLinkBtnText: {
+    color: '#FFF',
+    fontSize: 11,
+    fontWeight: theme.typography.weights.bold,
+  },
+  shelfSelectorLabel: {
+    fontSize: theme.typography.sizes.xs + 1,
+    fontWeight: theme.typography.weights.semiBold,
+    color: theme.colors.textSecondary,
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  shelfChipsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingBottom: 14,
+  },
+  shelfChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: theme.radius.pill,
+    marginRight: 8,
+  },
+  shelfChipActive: {
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
+  },
+  shelfChipText: {
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.text,
+    fontWeight: theme.typography.weights.medium,
+  },
+  shelfChipTextActive: {
+    color: '#FFF',
+    fontWeight: theme.typography.weights.bold,
+  },
+  shelfBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#EEF2FF',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: theme.radius.pill,
+    gap: 4,
+    marginBottom: 6,
+    maxWidth: '90%',
+  },
+  shelfBadgeText: {
+    fontSize: 11,
+    color: '#4F46E5',
+    fontWeight: theme.typography.weights.medium,
+  },
+  shelfBadgeUnassigned: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#FFFBEB',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: theme.radius.pill,
+    gap: 4,
+    marginBottom: 6,
+  },
+  shelfBadgeTextUnassigned: {
+    fontSize: 11,
+    color: '#D97706',
+    fontWeight: theme.typography.weights.medium,
+  },
+  sectionSelectWrap: {
+    marginBottom: 16,
+    backgroundColor: '#F9FAFB',
+    padding: 12,
+    borderRadius: theme.radius.medium,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  sectionRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+  },
+  sectionChip: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    borderRadius: theme.radius.medium,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+  },
+  sectionChipActive: {
+    backgroundColor: '#4F46E5',
+    borderColor: '#4F46E5',
+  },
+  sectionChipNumber: {
+    fontSize: 14,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text,
+  },
+  sectionChipNumberActive: {
+    color: '#FFFFFF',
+  },
+  sectionChipLabel: {
+    fontSize: 10,
+    fontWeight: theme.typography.weights.medium,
+    color: theme.colors.textSecondary,
+    marginTop: 2,
+  },
+  sectionChipLabelActive: {
+    color: 'rgba(255,255,255,0.85)',
+  },
+  actionBtnRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  editLocBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 7,
+    borderRadius: theme.radius.small,
+    backgroundColor: '#EEF2FF',
+    borderWidth: 1,
+    borderColor: '#C7D2FE',
+    gap: 3,
+  },
+  editLocBtnText: {
+    fontSize: 11,
+    fontWeight: theme.typography.weights.semiBold,
+    color: '#4F46E5',
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  modalSheet: {
+    width: '100%',
+    maxWidth: 520,
+    maxHeight: '90%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: theme.radius.xl,
+    padding: 20,
+    ...theme.shadows.lg,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  modalHeaderTitleGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    flex: 1,
+  },
+  modalIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#EEF2FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalTitle: {
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text,
+  },
+  modalSubtitle: {
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.textSecondary,
+    marginTop: 2,
+  },
+  modalCloseBtn: {
+    padding: 6,
+    borderRadius: theme.radius.pill,
+  },
+  modalScroll: {
+    paddingVertical: 14,
+  },
+  modalSectionLabel: {
+    fontSize: theme.typography.sizes.xs + 1,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 8,
+  },
+  modalSectionHelp: {
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.textSecondary,
+    marginBottom: 10,
+    lineHeight: 16,
+  },
+  shelfOptionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  shelfOptionCard: {
+    width: '48%',
+    padding: 12,
+    borderRadius: theme.radius.medium,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+  },
+  shelfOptionCardActive: {
+    backgroundColor: '#EEF2FF',
+    borderColor: '#4F46E5',
+  },
+  shelfOptionTitle: {
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text,
+    marginTop: 4,
+  },
+  shelfOptionTitleActive: {
+    color: '#4F46E5',
+  },
+  shelfOptionSub: {
+    fontSize: 11,
+    color: theme.colors.textSecondary,
+    marginTop: 2,
+  },
+  shelfOptionCoords: {
+    fontSize: 10,
+    color: theme.colors.textMuted,
+    marginTop: 3,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+  },
+  modalSectionsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+  },
+  modalSecBox: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: theme.radius.medium,
+    backgroundColor: '#F9FAFB',
+    borderWidth: 1.5,
+    borderColor: '#E5E7EB',
+  },
+  modalSecBoxActive: {
+    backgroundColor: '#EEF2FF',
+    borderColor: '#4F46E5',
+  },
+  modalSecNumberCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#E5E7EB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
+  modalSecNumberCircleActive: {
+    backgroundColor: '#4F46E5',
+  },
+  modalSecNumber: {
+    fontSize: 13,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text,
+  },
+  modalSecNumberActive: {
+    color: '#FFFFFF',
+  },
+  modalSecTitle: {
+    fontSize: 10,
+    fontWeight: theme.typography.weights.medium,
+    color: theme.colors.textSecondary,
+  },
+  modalSecTitleActive: {
+    color: '#4F46E5',
+    fontWeight: theme.typography.weights.bold,
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingTop: 14,
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
+    gap: 10,
+  },
+  modalCancelBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: theme.radius.medium,
+  },
+  modalCancelText: {
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.medium,
+    color: theme.colors.textSecondary,
+  },
+  modalSaveBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#4F46E5',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: theme.radius.medium,
+  },
+  modalSaveBtnDisabled: {
+    opacity: 0.6,
+  },
+  modalSaveText: {
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.bold,
+    color: '#FFFFFF',
   },
 });

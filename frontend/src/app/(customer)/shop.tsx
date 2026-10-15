@@ -78,6 +78,8 @@ export default function ShopScreen() {
                 stock={item.stock}
                 imageUrl={item.image_url}
                 description={item.description}
+                shelfId={item.shelf_id}
+                shelf={item.shelf}
                 cartCount={getItemQuantity(item.id)}
                 onAdd={() => handleAddToCart(item)}
                 onRemove={() => removeFromCart(item.id)}

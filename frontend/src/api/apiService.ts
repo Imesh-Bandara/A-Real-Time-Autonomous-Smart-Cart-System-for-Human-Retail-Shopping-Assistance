@@ -35,19 +35,86 @@ api.interceptors.request.use((config) => {
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
+export interface ShelfSection {
+  id: number | null;
+  shelf_id: string;
+  section_number: number;  // 1 to 5
+  x_coord: number;
+  y_coord: number;
+  orientation_theta: number;
+}
+
+export interface Shelf {
+  id: string;             // e.g. 'SHELF_A', 'SHELF_B', 'SHELF_C'
+  name: string;           // e.g. 'Shelf A - Fruits & Vegetables'
+  x_coord: number;        // Map X coordinate in meters
+  y_coord: number;        // Map Y coordinate in meters
+  orientation_theta?: number; // Heading angle in degrees
+  total_sections?: number;
+  product_count?: number;
+  sections?: ShelfSection[];  // Per-section navigation coordinates
+  products?: {
+    id: number;
+    name: string;
+    price: number;
+    stock?: number;
+    shelf_id?: string | null;
+    shelf_section?: number;
+    image_url?: string | null;
+  }[];
+}
+
 export interface Product {
   id: number;
   name: string;
   price: number;
   stock: number;
+  shelf_id?: string | null;
+  shelf_section?: number | null;
+  shelf?: Shelf | null;
   description?: string | null;
   image_url?: string | null;
+}
+
+export interface NavigationWaypoint {
+  shelf_id: string;
+  shelf_coords?: {
+    x: number;
+    y: number;
+    orientation_theta: number;
+  };
+  section: number;         // Section number (1-5)
+  section_coords?: {
+    x: number;
+    y: number;
+    orientation_theta: number;
+  };
+  x: number;
+  y: number;
+  orientation_theta: number;
+  items: string[];
+}
+
+export interface CheckoutResponse {
+  status: string;
+  order_id: string;
+  cart_id: string;
+  created_at: string;
+  waypoints: NavigationWaypoint[];
+  total_amount: number;
+  mqtt_topic: string;
+  mqtt_published: boolean;
+  mqtt_mode: string;
+  message: string;
+  warning?: string;
 }
 
 export interface ProductPayload {
   name: string;
   price: number | string;
   stock: number | string;
+  shelf_id?: string | null;
+  shelf_section?: number | string | null;
   description?: string | null;
   imageUri?: string | null;
   imageName?: string | null;
@@ -165,6 +232,12 @@ export const addProduct = async (productData: ProductPayload) => {
     formData.append('name', String(productData.name));
     formData.append('price', String(productData.price));
     formData.append('stock', String(productData.stock));
+    if (productData.shelf_id) {
+      formData.append('shelf_id', productData.shelf_id);
+    }
+    if (productData.shelf_section) {
+      formData.append('shelf_section', String(productData.shelf_section));
+    }
     if (productData.description?.trim()) {
       formData.append('description', productData.description.trim());
     }
@@ -258,5 +331,130 @@ export const fetchAdminOrders = async (): Promise<Order[]> => {
     return response.data;
   } catch (error) {
     throw getErrorMessage(error, 'Failed to fetch admin orders.');
+  }
+};
+
+// ---------------------------------------------------------------------------
+// CartMate Autonomous Navigation & Shelves
+// ---------------------------------------------------------------------------
+export const fetchShelves = async (includeProducts: boolean = true): Promise<Shelf[]> => {
+  try {
+    const response = await api.get(`/api/shelves?include_products=${includeProducts}`);
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Failed to fetch supermarket shelves.');
+  }
+};
+
+export const createShelf = async (shelfData: {
+  id: string;
+  name: string;
+  x_coord: number;
+  y_coord: number;
+  orientation_theta?: number;
+}): Promise<{ msg: string; shelf: Shelf }> => {
+  try {
+    const response = await api.post('/api/shelves', shelfData);
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Failed to create shelf.');
+  }
+};
+
+export const updateShelf = async (
+  shelfId: string,
+  shelfData: Partial<{
+    name: string;
+    x_coord: number;
+    y_coord: number;
+    orientation_theta: number;
+  }>
+): Promise<{ msg: string; shelf: Shelf }> => {
+  try {
+    const response = await api.put(`/api/shelves/${shelfId}`, shelfData);
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Failed to update shelf.');
+  }
+};
+
+export const deleteShelf = async (shelfId: string): Promise<{ msg: string }> => {
+  try {
+    const response = await api.delete(`/api/shelves/${shelfId}`);
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Failed to delete shelf.');
+  }
+};
+
+export const assignProductShelf = async (
+  productId: number,
+  shelfId: string | null,
+  shelfSection?: number | null
+): Promise<{ msg: string; product: Product }> => {
+  try {
+    const response = await api.patch(`/api/products/${productId}/shelf`, {
+      shelf_id: shelfId,
+      shelf_section: shelfSection ?? (shelfId ? 1 : null),
+    });
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Failed to assign product to shelf.');
+  }
+};
+
+export const updateProduct = async (
+  productId: number,
+  updates: Partial<ProductPayload>
+): Promise<{ msg: string; product: Product }> => {
+  try {
+    const response = await api.patch(`/api/products/${productId}`, updates);
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Failed to update product details.');
+  }
+};
+
+export const checkoutOrder = async (
+  productIds: number[],
+  cartId: string = 'CART_01'
+): Promise<CheckoutResponse> => {
+  try {
+    const response = await api.post('/api/orders/checkout', {
+      product_ids: productIds,
+      cart_id: cartId,
+    });
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Failed to checkout and start cart navigation.');
+  }
+};
+
+// ---------------------------------------------------------------------------
+// Shelf Section Coordinate Management
+// ---------------------------------------------------------------------------
+export const fetchShelfSections = async (shelfId: string): Promise<ShelfSection[]> => {
+  try {
+    const response = await api.get(`/api/shelves/${shelfId}/sections`);
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Failed to fetch shelf section coordinates.');
+  }
+};
+
+export const updateShelfSection = async (
+  shelfId: string,
+  sectionNumber: number,
+  coords: { x_coord: number; y_coord: number; orientation_theta?: number }
+): Promise<{ msg: string; sections: ShelfSection[] }> => {
+  try {
+    const response = await api.put(`/api/shelves/${shelfId}/sections/${sectionNumber}`, {
+      x_coord: coords.x_coord,
+      y_coord: coords.y_coord,
+      orientation_theta: coords.orientation_theta ?? 0,
+    });
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Failed to update shelf section coordinates.');
   }
 };

@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { theme } from '../../theme/theme';
-import { fetchProducts, Product } from '../../api/apiService';
+import { fetchProducts, fetchShelves, Product, Shelf } from '../../api/apiService';
 import { AdminSectionHeader } from '../../components/admin/AdminSectionHeader';
 import { AdminStatCard } from '../../components/admin/AdminStatCard';
 
@@ -25,6 +25,13 @@ const QUICK_LINKS = [
     route: '/(admin)/inventory',
     color: '#4F46E5',
     bg: '#EEF2FF',
+  },
+  {
+    label: 'Shelves & Map',
+    icon: 'layers-outline' as const,
+    route: '/(admin)/shelves',
+    color: '#8B5CF6',
+    bg: '#F5F3FF',
   },
   {
     label: 'Orders',
@@ -65,17 +72,22 @@ function getGreeting() {
 export default function AdminDashboard() {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
+  const [shelves, setShelves] = useState<Shelf[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadProducts();
+    loadDashboardData();
   }, []);
 
-  const loadProducts = async () => {
+  const loadDashboardData = async () => {
     try {
       setLoading(true);
-      const data = await fetchProducts();
-      setProducts(data);
+      const [productsData, shelvesData] = await Promise.all([
+        fetchProducts(),
+        fetchShelves(true).catch(() => []),
+      ]);
+      setProducts(productsData);
+      setShelves(shelvesData);
     } catch (err) {
       console.log('Failed to fetch dashboard data', err);
     } finally {
@@ -123,6 +135,11 @@ export default function AdminDashboard() {
             </View>
             <View style={styles.heroStatDivider} />
             <View style={styles.heroStatItem}>
+              <Text style={styles.heroStatValue}>{shelves.length}</Text>
+              <Text style={styles.heroStatLabel}>Shelves</Text>
+            </View>
+            <View style={styles.heroStatDivider} />
+            <View style={styles.heroStatItem}>
               <Text style={styles.heroStatValue}>{lowStockProducts.length}</Text>
               <Text style={styles.heroStatLabel}>Low stock</Text>
             </View>
@@ -152,18 +169,18 @@ export default function AdminDashboard() {
                     background="#EEF2FF"
                   />
                   <AdminStatCard
+                    label="Mapped shelves"
+                    value={shelves.length}
+                    icon="layers-outline"
+                    color="#8B5CF6"
+                    background="#F5F3FF"
+                  />
+                  <AdminStatCard
                     label="Low stock items"
                     value={lowStockProducts.length}
                     icon="alert-circle-outline"
                     color="#D97706"
                     background="#FFFBEB"
-                  />
-                  <AdminStatCard
-                    label="Out of stock"
-                    value={outOfStockCount}
-                    icon="close-circle-outline"
-                    color="#DC2626"
-                    background="#FEF2F2"
                   />
                   <AdminStatCard
                     label="Active carts"
@@ -191,6 +208,71 @@ export default function AdminDashboard() {
                       <Text style={styles.quickLinkLabel}>{link.label}</Text>
                     </TouchableOpacity>
                   ))}
+                </View>
+              </Animated.View>
+
+              <Animated.View entering={FadeInDown.delay(200).duration(450)} style={styles.block}>
+                <AdminSectionHeader
+                  overline="PHYSICAL STORE"
+                  title="Shelf management"
+                  subtitle="Configure shelves, coordinates, and product locations"
+                  actionLabel="Manage all"
+                  onAction={() => router.push('/(admin)/shelves')}
+                />
+                <View style={styles.shelvesSummaryCard}>
+                  <View style={styles.shelvesHeaderRow}>
+                    <View style={styles.shelvesHeaderLeft}>
+                      <View style={styles.shelfIconBadge}>
+                        <Ionicons name="navigate-outline" size={18} color="#8B5CF6" />
+                      </View>
+                      <View>
+                        <Text style={styles.shelvesCardTitle}>Store Floor & Waypoints</Text>
+                        <Text style={styles.shelvesCardSubtitle}>
+                          {shelves.length} shelves mapped with autonomous cart waypoints
+                        </Text>
+                      </View>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.shelfManageBtn}
+                      onPress={() => router.push('/(admin)/shelves')}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={styles.shelfManageBtnText}>Configure</Text>
+                      <Ionicons name="arrow-forward" size={14} color="#FFF" />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.shelvesGrid}>
+                    {shelves.slice(0, 4).map((shelf) => {
+                      const count = shelf.products?.length ?? 0;
+                      return (
+                        <TouchableOpacity
+                          key={shelf.id}
+                          style={styles.shelfMiniCard}
+                          activeOpacity={0.75}
+                          onPress={() => router.push('/(admin)/shelves')}
+                        >
+                          <View style={styles.shelfMiniTop}>
+                            <View style={styles.shelfMiniBadge}>
+                              <Text style={styles.shelfMiniBadgeText}>{shelf.id}</Text>
+                            </View>
+                            <Text style={styles.shelfMiniCount}>
+                              {count} {count === 1 ? 'item' : 'items'}
+                            </Text>
+                          </View>
+                          <Text style={styles.shelfMiniName} numberOfLines={1}>
+                            {shelf.name}
+                          </Text>
+                          <View style={styles.shelfCoordRow}>
+                            <Ionicons name="location-outline" size={12} color={theme.colors.textMuted} />
+                            <Text style={styles.shelfCoordText}>
+                              X: {shelf.x_coord}m, Y: {shelf.y_coord}m
+                            </Text>
+                          </View>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
                 </View>
               </Animated.View>
 
@@ -495,5 +577,111 @@ const styles = StyleSheet.create({
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.semiBold,
     color: theme.colors.success,
+  },
+  shelvesSummaryCard: {
+    backgroundColor: theme.colors.card,
+    borderRadius: theme.radius.large,
+    padding: theme.spacing.md,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    ...theme.shadows.sm,
+  },
+  shelvesHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.md,
+    paddingBottom: theme.spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  shelvesHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: 12,
+  },
+  shelfIconBadge: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    backgroundColor: '#F5F3FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  shelvesCardTitle: {
+    fontSize: theme.typography.sizes.sm + 1,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.text,
+  },
+  shelvesCardSubtitle: {
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.textSecondary,
+    marginTop: 2,
+  },
+  shelfManageBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#8B5CF6',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: theme.radius.pill,
+    gap: 4,
+  },
+  shelfManageBtnText: {
+    color: '#FFF',
+    fontSize: theme.typography.sizes.xs,
+    fontWeight: theme.typography.weights.bold,
+  },
+  shelvesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  shelfMiniCard: {
+    width: '48%',
+    backgroundColor: '#F9FAFB',
+    borderRadius: theme.radius.medium,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  shelfMiniTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  shelfMiniBadge: {
+    backgroundColor: '#EEF2FF',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  shelfMiniBadgeText: {
+    fontSize: 10,
+    fontWeight: theme.typography.weights.bold,
+    color: '#4F46E5',
+  },
+  shelfMiniCount: {
+    fontSize: 11,
+    fontWeight: theme.typography.weights.medium,
+    color: theme.colors.textSecondary,
+  },
+  shelfMiniName: {
+    fontSize: theme.typography.sizes.xs + 1,
+    fontWeight: theme.typography.weights.semiBold,
+    color: theme.colors.text,
+    marginBottom: 4,
+  },
+  shelfCoordRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  shelfCoordText: {
+    fontSize: 10,
+    color: theme.colors.textMuted,
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
 });

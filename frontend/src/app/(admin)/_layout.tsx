@@ -71,6 +71,16 @@ export default function AdminLayout() {
         }}
       />
       <Drawer.Screen
+        name="shelves"
+        options={{
+          drawerLabel: 'Shelf Management',
+          title: 'Shelf & Location Manager',
+          drawerIcon: ({ color }) => (
+            <Ionicons name="layers-outline" size={20} color={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
         name="orders"
         options={{
           drawerLabel: 'Orders',

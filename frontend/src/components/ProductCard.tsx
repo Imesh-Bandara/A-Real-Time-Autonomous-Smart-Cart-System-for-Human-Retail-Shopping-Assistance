@@ -13,6 +13,8 @@ interface ProductCardProps {
   stock: number;
   description?: string | null;
   imageUrl?: string | null;
+  shelfId?: string | null;
+  shelf?: { id: string; name: string; x_coord: number; y_coord: number } | null;
   cartCount?: number;
   onAdd?: () => void;
   onRemove?: () => void;
@@ -29,6 +31,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   stock,
   description,
   imageUrl,
+  shelfId,
+  shelf,
   cartCount = 0,
   onAdd,
   onRemove,
@@ -82,6 +86,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             >
               {description}
             </Text>
+          ) : null}
+          {(shelf || shelfId) ? (
+            <View style={styles.shelfTag}>
+              <Ionicons name="location" size={12} color="#4F46E5" />
+              <Text style={styles.shelfTagText} numberOfLines={1}>
+                {shelf?.name || shelfId}
+                {shelf ? ` (${shelf.x_coord}m, ${shelf.y_coord}m)` : ''}
+              </Text>
+            </View>
           ) : null}
           <Text style={[styles.productPrice, compact && styles.compactPrice]}>
             ${price.toFixed(2)}
@@ -260,6 +273,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     marginBottom: 6,
+  },
+  shelfTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#EEF2FF',
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#C7D2FE',
+  },
+  shelfTagText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#4F46E5',
+    marginLeft: 4,
   },
   productPrice: {
     fontSize: 18,
