@@ -1,12 +1,63 @@
+import hmac
 import logging
-from datetime import datetime, timezone
+import os
+from datetime import datetime, timedelta, timezone
 from flask import Blueprint, jsonify, request
-from models import db, Shelf, ShelfSection, Product, Order, OrderItem
+from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity, jwt_required
+from models import db, Shelf, ShelfSection, Product, Order, OrderItem, OrderEvent, iso_utc
 from mqtt_service import publish_navigation_route, DEFAULT_CART_ID
+import otp_service
+from order_status import ALLOWED_SHOPPING_STATES, set_shopping_state, record_event, current_shopping_state
 
 logger = logging.getLogger(__name__)
 
 cartmate_bp = Blueprint('cartmate', __name__)
+
+# Pickup time estimate at checkout: now + (waypoints * PER_WAYPOINT) + BASE.
+# Overwritten with the real finish time when the cart reports order_done.
+PICKUP_MINUTES_PER_WAYPOINT = 3
+PICKUP_BASE_MINUTES = 5
+
+ORDER_EVENTS_LIMIT = 20
+
+
+def _optional_user_id():
+    """User id from a valid JWT, or None. A missing/expired/invalid token never blocks the request."""
+    try:
+        verify_jwt_in_request(optional=True)
+        identity = get_jwt_identity()
+        return int(identity) if identity is not None else None
+    except Exception:
+        return None
+
+
+def _as_utc(value):
+    if value is None:
+        return None
+    return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value
+
+
+LOCALHOST_ADDRS = ('127.0.0.1', '::1')
+
+
+def _cart_key_error(allow_localhost_without_key=False):
+    """
+    Validate the X-Cart-Key shared secret (env CART_API_KEY). Returns an error response or None.
+    allow_localhost_without_key: when CART_API_KEY is NOT set, accept requests from this machine only
+    (local testing). Uses the socket address, not X-Forwarded-For, so it cannot be spoofed by a header.
+    """
+    expected = os.environ.get('CART_API_KEY')
+    if not expected:
+        if allow_localhost_without_key and request.remote_addr in LOCALHOST_ADDRS:
+            return None
+        if allow_localhost_without_key:
+            return jsonify({"msg": "CART_API_KEY is not set: only requests from 127.0.0.1 are allowed"}), 403
+        logger.error("[CartMate] CART_API_KEY is not set; cart-only endpoints are disabled.")
+        return jsonify({"msg": "Cart API key is not configured on the server"}), 503
+    provided = request.headers.get('X-Cart-Key', '')
+    if not hmac.compare_digest(provided.encode('utf-8'), expected.encode('utf-8')):
+        return jsonify({"msg": "Invalid or missing X-Cart-Key"}), 401
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -414,16 +465,27 @@ def checkout_order():
         ]
 
         # Record Order in database
+        now = datetime.now(timezone.utc)
         order = Order(
+            user_id=_optional_user_id(),
             cart_id=cart_id,
             status='sent_to_cart',
             total_amount=round(total_amount, 2),
             mqtt_status='pending',
-            created_at=datetime.now(timezone.utc),
-            submitted_at=datetime.now(timezone.utc),
+            created_at=now,
+            submitted_at=now,
+            payment_status='unpaid',
+            shopping_state='waiting',
+            otp_attempts=0,
+            otp_locked=False,
+            pickup_eta=now + timedelta(
+                minutes=len(waypoints) * PICKUP_MINUTES_PER_WAYPOINT + PICKUP_BASE_MINUTES
+            ),
         )
         db.session.add(order)
         db.session.flush()
+        # Session number uses the store's local date, e.g. SES-20261020-0002
+        order.session_code = f"SES-{datetime.now().strftime('%Y%m%d')}-{order.id:04d}"
 
         # Add Order Items
         for p in products:
@@ -465,6 +527,12 @@ def checkout_order():
             "mqtt_published": mqtt_result.get('success', False),
             "mqtt_mode": mqtt_result.get('mode', 'mock'),
             "message": f"Navigation route with {len(waypoints)} waypoint(s) transmitted to CartMate ({cart_id})",
+            # Additive fields for the payment / confirmation flow
+            "id": order.id,
+            "session_code": order.session_code,
+            "payment_status": order.payment_status,
+            "shopping_state": order.shopping_state,
+            "pickup_eta": iso_utc(order.pickup_eta),
         }
 
         if mqtt_result.get('warning'):
@@ -480,3 +548,284 @@ def checkout_order():
             "msg": "Checkout processing failed",
             "error": str(e)
         }), 500
+
+
+def _current_user_id():
+    identity = get_jwt_identity()
+    return int(identity) if identity is not None else None
+
+
+# ---------------------------------------------------------------------------
+# 4. POST /api/orders/<id>/pay  (MOCK payment — no real gateway)
+# Requires the customer's JWT; the order must belong to them. Marks the order paid and
+# issues the pickup OTP (stored encrypted). Idempotent: paying again keeps the same OTP.
+# ---------------------------------------------------------------------------
+@cartmate_bp.route('/api/orders/<int:order_id>/pay', methods=['POST'])
+@jwt_required()
+def pay_order(order_id):
+    try:
+        # Row lock (PostgreSQL) so a double tap cannot issue two OTPs
+        order = db.session.query(Order).filter_by(id=order_id).with_for_update().first()
+        if not order:
+            return jsonify({"status": "error", "msg": "Order not found"}), 404
+
+        if order.user_id is None or order.user_id != _current_user_id():
+            db.session.rollback()
+            return jsonify({"status": "error", "msg": "This order does not belong to your account"}), 403
+
+        response = {
+            "status": "success",
+            "id": order.id,
+            "order_id": order.order_code,
+            "cart_id": order.cart_id,
+            "payment_status": "paid",
+        }
+
+        if order.payment_status == 'paid':
+            response.update({
+                "msg": "Order is already paid",
+                "otp_already_issued": True,
+                "paid_at": iso_utc(order.paid_at),
+                "otp_expires_at": iso_utc(order.otp_expires_at),
+                "order": order.to_dict(include_items=True),
+            })
+            db.session.rollback()
+            return jsonify(response), 200
+
+        now = datetime.now(timezone.utc)
+        otp = otp_service.generate_otp()
+        order.payment_status = 'paid'
+        order.paid_at = now
+        order.otp_encrypted = otp_service.encrypt_otp(otp)
+        order.otp_expires_at = otp_service.otp_expiry_from(now)
+        order.otp_attempts = 0
+        order.otp_locked = False
+        record_event(order, 'payment_received', detail='Mock payment')
+        db.session.commit()
+        logger.info(f"[CartMate] {order.order_code} paid; pickup OTP issued (expires {iso_utc(order.otp_expires_at)})")
+
+        response.update({
+            "msg": "Payment successful",
+            "otp": otp,
+            "otp_already_issued": False,
+            "paid_at": iso_utc(order.paid_at),
+            "otp_expires_at": iso_utc(order.otp_expires_at),
+            "order": order.to_dict(include_items=True),
+        })
+        return jsonify(response), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.exception("Payment processing failed")
+        return jsonify({"status": "error", "msg": "Payment processing failed", "error": str(e)}), 500
+
+
+def _otp_unavailable_reason(order):
+    """Why a paid order's OTP cannot be used right now, or None."""
+    if order.otp_locked:
+        return 'locked', "OTP is locked after too many wrong attempts. Please see staff."
+    expires_at = _as_utc(order.otp_expires_at)
+    if not expires_at or expires_at <= datetime.now(timezone.utc):
+        return 'expired', "OTP has expired. Please see staff."
+    return None
+
+
+# ---------------------------------------------------------------------------
+# 4b. GET /api/orders/<id>/otp  (customer app — owner only, paid orders only)
+# ---------------------------------------------------------------------------
+@cartmate_bp.route('/api/orders/<int:order_id>/otp', methods=['GET'])
+@jwt_required()
+def get_order_otp(order_id):
+    order = Order.query.get(order_id)
+    if not order:
+        return jsonify({"msg": "Order not found"}), 404
+    if order.user_id is None or order.user_id != _current_user_id():
+        return jsonify({"msg": "This order does not belong to your account"}), 403
+    if order.payment_status != 'paid' or not order.otp_encrypted:
+        return jsonify({"msg": "Order is not paid yet. Pay to get your pickup OTP.", "reason": "not_paid"}), 409
+    unavailable = _otp_unavailable_reason(order)
+    if unavailable:
+        return jsonify({"msg": unavailable[1], "reason": unavailable[0],
+                        "expires_at": iso_utc(order.otp_expires_at)}), 409
+    try:
+        otp = otp_service.decrypt_otp(order.otp_encrypted)
+    except otp_service.OtpDecryptError as e:
+        logger.error(f"[CartMate] {order.order_code}: {e}")
+        return jsonify({"msg": "OTP is unavailable, please see staff", "reason": "otp_unreadable"}), 500
+    return jsonify({
+        "order_id": order.order_code,
+        "cart_id": order.cart_id,
+        "otp": otp,
+        "expires_at": iso_utc(order.otp_expires_at),
+    }), 200
+
+
+# ---------------------------------------------------------------------------
+# 4c. GET /api/carts/<cart_id>/current-otp  (Raspberry Pi OLED — header X-Cart-Key)
+# Latest paid order of this cart that finished shopping, is not picked up, expired or locked.
+# ---------------------------------------------------------------------------
+CURRENT_OTP_SCAN_LIMIT = 10
+
+
+@cartmate_bp.route('/api/carts/<cart_id>/current-otp', methods=['GET'])
+def get_cart_current_otp(cart_id):
+    key_error = _cart_key_error()
+    if key_error:
+        return key_error
+
+    candidates = (Order.query
+                  .filter(db.func.upper(Order.cart_id) == cart_id.strip().upper(),
+                          Order.payment_status == 'paid',
+                          Order.shopping_state == 'completed',
+                          Order.otp_encrypted.isnot(None),
+                          Order.picked_up_at.is_(None))
+                  .order_by(Order.completed_at.desc(), Order.id.desc())
+                  .limit(CURRENT_OTP_SCAN_LIMIT).all())
+    for order in candidates:
+        if _otp_unavailable_reason(order):
+            continue
+        try:
+            otp = otp_service.decrypt_otp(order.otp_encrypted)
+        except otp_service.OtpDecryptError as e:
+            logger.error(f"[CartMate] {order.order_code}: {e}")
+            continue
+        return jsonify({
+            "order_id": order.order_code,
+            "otp": otp,
+            "expires_at": iso_utc(order.otp_expires_at),
+        }), 200
+    return jsonify({"msg": f"No order is ready for pickup at {cart_id}"}), 404
+
+
+# ---------------------------------------------------------------------------
+# 5. POST /api/orders/<id>/verify-otp  (called by the cart / Raspberry Pi)
+# Header: X-Cart-Key: <CART_API_KEY>   Body: {"otp": "123456", "cart_id": "CART_01"}
+# ---------------------------------------------------------------------------
+@cartmate_bp.route('/api/orders/<int:order_id>/verify-otp', methods=['POST'])
+def verify_order_otp(order_id):
+    key_error = _cart_key_error()
+    if key_error:
+        return key_error
+
+    max_attempts = otp_service.OTP_MAX_ATTEMPTS
+
+    def result(valid, order, status_code=200, reason=None):
+        body = {
+            "valid": valid,
+            "attempts_left": max(0, max_attempts - (order.otp_attempts or 0)),
+            "locked": bool(order.otp_locked),
+        }
+        if reason:
+            body["reason"] = reason
+        return jsonify(body), status_code
+
+    data = request.get_json(silent=True) or {}
+    otp = str(data.get('otp') or '').replace(' ', '').strip()
+    cart_id = str(data.get('cart_id') or '').strip().upper()
+    if not otp or not cart_id:
+        return jsonify({"valid": False, "attempts_left": None, "locked": False,
+                        "reason": "missing_fields", "msg": "'otp' and 'cart_id' are required"}), 400
+
+    try:
+        order = db.session.query(Order).filter_by(id=order_id).with_for_update().first()
+        if not order:
+            return jsonify({"valid": False, "attempts_left": None, "locked": False,
+                            "reason": "order_not_found"}), 404
+
+        response = None
+        if order.payment_status != 'paid' or not order.otp_encrypted:
+            response = result(False, order, 409, 'not_paid')
+        elif cart_id != (order.cart_id or '').upper():
+            response = result(False, order, 403, 'wrong_cart')
+        elif order.otp_locked:
+            response = result(False, order, 423, 'locked')
+        else:
+            expires_at = _as_utc(order.otp_expires_at)
+            if not expires_at or expires_at <= datetime.now(timezone.utc):
+                response = result(False, order, 410, 'expired')
+        if response:
+            db.session.rollback()
+            return response
+
+        if otp_service.otp_matches(otp, order.otp_encrypted):
+            order.otp_attempts = 0
+            if not order.picked_up_at:
+                order.picked_up_at = datetime.now(timezone.utc)  # Order.status is left unchanged
+            record_event(order, 'otp_verified', detail=f"Verified at {cart_id}")
+            response = result(True, order)
+            db.session.commit()
+            return response
+
+        order.otp_attempts = (order.otp_attempts or 0) + 1
+        if order.otp_attempts >= max_attempts:
+            order.otp_locked = True
+            record_event(order, 'otp_locked', detail=f"{order.otp_attempts} wrong OTP attempts")
+            logger.warning(f"[CartMate] OTP locked for {order.order_code} after {order.otp_attempts} wrong attempts")
+            response = result(False, order, 423, 'locked')
+        else:
+            response = result(False, order, 200, 'wrong_otp')
+        db.session.commit()
+        return response
+    except otp_service.OtpDecryptError as e:
+        db.session.rollback()
+        logger.error(f"[CartMate] ORD_{order_id:04d}: {e}")
+        return jsonify({"valid": False, "attempts_left": None, "locked": False,
+                        "reason": "otp_unreadable"}), 500
+    except Exception as e:
+        db.session.rollback()
+        logger.exception("OTP verification failed")
+        return jsonify({"valid": False, "attempts_left": None, "locked": False,
+                        "reason": "server_error", "error": str(e)}), 500
+
+
+# ---------------------------------------------------------------------------
+# 6. PATCH /api/orders/<id>/shopping-state  (simulate the cart without an MQTT broker)
+# Header: X-Cart-Key: <CART_API_KEY>   Body: {"state": "completed"}
+# If CART_API_KEY is not set, only requests from 127.0.0.1 are accepted (local testing).
+# Writes Order.shopping_state only — never Order.status.
+# ---------------------------------------------------------------------------
+@cartmate_bp.route('/api/orders/<int:order_id>/shopping-state', methods=['PATCH'])
+def update_shopping_state(order_id):
+    key_error = _cart_key_error(allow_localhost_without_key=True)
+    if key_error:
+        return key_error
+
+    data = request.get_json(silent=True) or {}
+    new_state = str(data.get('state') or '').strip().lower()
+    if new_state not in ALLOWED_SHOPPING_STATES:
+        return jsonify({
+            "msg": f"Invalid state. Allowed: {', '.join(ALLOWED_SHOPPING_STATES)}"
+        }), 400
+
+    order = Order.query.get(order_id)
+    if not order:
+        return jsonify({"msg": "Order not found"}), 404
+
+    try:
+        if current_shopping_state(order) == 'completed' and new_state != 'completed':
+            return jsonify({"msg": "Shopping is already completed", "order": order.to_dict(include_items=True)}), 409
+        changed = set_shopping_state(order, new_state)
+        if changed:
+            record_event(order, new_state, detail='Set via PATCH /shopping-state')
+        db.session.commit()
+        return jsonify({
+            "msg": f"Order {order.order_code} shopping_state is '{current_shopping_state(order)}'",
+            "changed": changed,
+            "order": order.to_dict(include_items=True),
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.exception("Failed to update shopping state")
+        return jsonify({"msg": "Failed to update shopping state", "error": str(e)}), 500
+
+
+# ---------------------------------------------------------------------------
+# 7. GET /api/orders/<id>/events  (latest cart progress messages, oldest first)
+# ---------------------------------------------------------------------------
+@cartmate_bp.route('/api/orders/<int:order_id>/events', methods=['GET'])
+def get_order_events(order_id):
+    order = Order.query.get(order_id)
+    if not order:
+        return jsonify({"msg": "Order not found"}), 404
+    events = (OrderEvent.query.filter_by(order_id=order_id)
+              .order_by(OrderEvent.id.desc()).limit(ORDER_EVENTS_LIMIT).all())
+    return jsonify([e.to_dict() for e in reversed(events)]), 200

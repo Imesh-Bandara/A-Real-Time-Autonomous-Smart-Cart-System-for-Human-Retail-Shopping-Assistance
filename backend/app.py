@@ -97,6 +97,13 @@ def delete_product_image(image_path):
 with app.app_context():
     seed_database(app)
 
+# Flask debug reloader is on when started with `python app.py` (see app.run below)
+RUN_WITH_RELOADER = __name__ == '__main__'
+
+# Cart status subscriber (MQTT_MODE=real only). With the reloader on, only the reloader child
+# (WERKZEUG_RUN_MAIN == "true") subscribes, so messages are not processed twice.
+mqtt_service.start_status_subscriber(app, reloader_active=RUN_WITH_RELOADER)
+
 
 # ---------------------------------------------------------------------------
 # General & Auth Routes
@@ -111,7 +118,16 @@ def home():
             "products": "GET /api/products",
             "shelves": "GET /api/shelves",
             "checkout": "POST /api/orders/checkout",
-            "mqtt_topic": "cartmate/navigation/target"
+            "mqtt_topic": "cartmate/navigation/target",
+            "orders": "GET /api/orders",
+            "order_detail": "GET /api/orders/<id>",
+            "pay": "POST /api/orders/<id>/pay (JWT, order owner)",
+            "order_otp": "GET /api/orders/<id>/otp (JWT, order owner)",
+            "cart_current_otp": "GET /api/carts/<cart_id>/current-otp (header X-Cart-Key)",
+            "verify_otp": "POST /api/orders/<id>/verify-otp (header X-Cart-Key)",
+            "shopping_state": "PATCH /api/orders/<id>/shopping-state (header X-Cart-Key)",
+            "order_events": "GET /api/orders/<id>/events",
+            "mqtt_status_topic": "cartmate/cart/<cart_id>/status"
         }
     })
 

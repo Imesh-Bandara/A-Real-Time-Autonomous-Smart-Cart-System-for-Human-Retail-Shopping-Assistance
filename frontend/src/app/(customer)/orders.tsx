@@ -1,33 +1,101 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { fetchOrders, Order } from '../../api/apiService';
 import { theme } from '../../theme/theme';
 import { Button } from '../../components/ui/Button';
+import { ORDER_POLL_INTERVAL_MS } from '../../hooks/useOrderPolling';
+import { alertOrderStatusOnce } from '../../services/orderAlerts';
+import {
+  getShoppingState,
+  getShoppingStateLabel,
+  isReadyForPickup,
+  isShoppingFinished,
+  parseServerDate,
+  READY_FOR_PICKUP_LABEL,
+} from '../../utils/orderFormat';
+
+// Orders older than this are not polled even if the cart never reported back
+const ACTIVE_ORDER_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+const isActiveOrder = (order: Order) => {
+  if (isShoppingFinished(getShoppingState(order))) return false;
+  const created = parseServerDate(order.created_at);
+  return !!created && Date.now() - created.getTime() < ACTIVE_ORDER_WINDOW_MS;
+};
 
 export default function OrdersScreen() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const activeIdsRef = useRef<Set<number>>(new Set()); // orders seen active while polling
   const router = useRouter();
 
-  useEffect(() => {
-    fetchOrders().then((data) => {
-      setOrders(data);
-      setLoading(false);
-    });
-  }, []);
+  // Load on focus; while an active order exists, re-fetch every 5 s until it finishes
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      let timer: ReturnType<typeof setTimeout> | undefined;
+
+      const tick = async () => {
+        let keepPolling = false;
+        try {
+          const data = await fetchOrders();
+          if (cancelled) return;
+          setOrders(data);
+          setError(null);
+          data.forEach((order) => {
+            if (isActiveOrder(order)) {
+              activeIdsRef.current.add(order.id);
+              keepPolling = true;
+            } else if (activeIdsRef.current.has(order.id) && isShoppingFinished(getShoppingState(order))) {
+              activeIdsRef.current.delete(order.id);
+              alertOrderStatusOnce(order);
+            }
+          });
+        } catch (err) {
+          if (cancelled) return;
+          setError(typeof err === 'string' ? err : 'Could not load your orders.');
+          keepPolling = activeIdsRef.current.size > 0;
+        } finally {
+          if (!cancelled) setLoading(false);
+        }
+        if (!cancelled && keepPolling) timer = setTimeout(tick, ORDER_POLL_INTERVAL_MS);
+      };
+
+      tick();
+      return () => {
+        cancelled = true;
+        if (timer) clearTimeout(timer);
+      };
+    }, [reloadKey])
+  );
+
+  const retry = () => {
+    setLoading(true);
+    setReloadKey((k) => k + 1);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Text style={styles.title}>My Orders</Text>
-        {loading ? (
+        {loading && orders.length === 0 ? (
           <View style={styles.center}>
             <ActivityIndicator size="large" color={theme.colors.primary} />
           </View>
+        ) : error && orders.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Ionicons name="cloud-offline-outline" size={64} color={theme.colors.textSecondary} />
+            <Text style={styles.emptyTitle}>Could not load orders</Text>
+            <Text style={styles.emptyText}>{error}</Text>
+            <Button title="Try Again" onPress={retry} style={{ marginTop: theme.spacing.lg }} />
+          </View>
         ) : orders.length > 0 ? (
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.listContent}>
+            {!!error && <Text style={styles.inlineError}>Connection issue: {error}</Text>}
             {orders.map((order) => (
               <TouchableOpacity 
                 key={order.id} 
@@ -58,6 +126,48 @@ export default function OrdersScreen() {
                   <Text style={styles.itemCount}>{order.item_count} items</Text>
                   <Text style={styles.orderTotal}>${order.total_amount.toFixed(2)}</Text>
                 </View>
+                {isReadyForPickup(order) ? (
+                  <View style={styles.liveRow}>
+                    <Ionicons name="bag-check" size={18} color={theme.colors.success} />
+                    <Text style={[styles.liveText, styles.readyText]}>{READY_FOR_PICKUP_LABEL}</Text>
+                  </View>
+                ) : isActiveOrder(order) && (
+                  <View style={styles.liveRow}>
+                    <ActivityIndicator size="small" color={theme.colors.info} />
+                    <Text style={styles.liveText}>{getShoppingStateLabel(getShoppingState(order))}</Text>
+                  </View>
+                )}
+                {order.payment_status !== undefined && (
+                  <View style={styles.actionRow}>
+                    {order.payment_status === 'paid' ? (
+                      <TouchableOpacity
+                        style={[styles.actionBtn, isReadyForPickup(order) && styles.actionBtnReady]}
+                        onPress={() =>
+                          router.push({ pathname: '/(customer)/order-confirmation', params: { id: String(order.id) } })
+                        }
+                      >
+                        <Ionicons
+                          name="key-outline"
+                          size={16}
+                          color={isReadyForPickup(order) ? '#FFFFFF' : theme.colors.primary}
+                        />
+                        <Text style={[styles.actionBtnText, isReadyForPickup(order) && { color: '#FFFFFF' }]}>
+                          Pickup & OTP
+                        </Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        style={[styles.actionBtn, styles.actionBtnPrimary]}
+                        onPress={() =>
+                          router.push({ pathname: '/(customer)/payment', params: { id: String(order.id) } })
+                        }
+                      >
+                        <Ionicons name="card-outline" size={16} color="#FFFFFF" />
+                        <Text style={[styles.actionBtnText, { color: '#FFFFFF' }]}>Make Payment</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                )}
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -158,5 +268,56 @@ const styles = StyleSheet.create({
     paddingVertical: 100,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  listContent: {
+    paddingBottom: 120, // clear the floating tab bar
+  },
+  inlineError: {
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.error,
+    textAlign: 'center',
+    marginBottom: theme.spacing.sm,
+  },
+  liveRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: theme.spacing.sm,
+  },
+  liveText: {
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.info,
+    fontWeight: theme.typography.weights.semiBold,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: theme.spacing.md,
+  },
+  actionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: theme.radius.pill,
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
+  },
+  actionBtnPrimary: {
+    backgroundColor: theme.colors.primary,
+  },
+  actionBtnReady: {
+    backgroundColor: theme.colors.success,
+    borderColor: theme.colors.success,
+  },
+  readyText: {
+    color: theme.colors.success,
+    fontWeight: theme.typography.weights.bold,
+  },
+  actionBtnText: {
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.primary,
   },
 });

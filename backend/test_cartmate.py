@@ -37,11 +37,12 @@ def test_endpoints():
         print("Checkout Response:", json.dumps(checkout_data, indent=2))
         assert res_checkout.status_code == 200
         assert checkout_data["cart_id"] == "CART_01"
-        assert len(checkout_data["waypoints"]) == 3  # Shelf A should be grouped! Apple + Banana in one stop!
-        shelf_a_wp = next(w for w in checkout_data["waypoints"] if w["shelf_id"] == "SHELF_A")
-        print("Shelf A Waypoint items (grouped):", shelf_a_wp["items"])
-        assert "Apple" in shelf_a_wp["items"]
-        assert "Banana" in shelf_a_wp["items"]
+        # Waypoints are grouped per shelf SECTION: Apple (A/1) and Banana (A/2) are separate stops
+        assert len(checkout_data["waypoints"]) == 4
+        shelf_a_items = [w["items"] for w in checkout_data["waypoints"] if w["shelf_id"] == "SHELF_A"]
+        print("Shelf A Waypoint items (per section):", shelf_a_items)
+        assert ["Apple"] in shelf_a_items
+        assert ["Banana"] in shelf_a_items
         print("\nAll backend CartMate tests PASSED successfully!")
 
 if __name__ == '__main__':

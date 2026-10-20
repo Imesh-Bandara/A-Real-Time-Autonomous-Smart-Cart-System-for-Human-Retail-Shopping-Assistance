@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,44 +6,33 @@ import {
   SafeAreaView,
   ActivityIndicator,
   ScrollView,
-  Platform,
-  Alert,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { fetchOrder, Order } from '../../api/apiService';
 import { theme } from '../../theme/theme';
 import { Button } from '../../components/ui/Button';
+import { PickupOtpCard } from '../../components/order/PickupOtpCard';
+import { PickupDetailsCard } from '../../components/order/PickupDetailsCard';
+import { useOrderPolling } from '../../hooks/useOrderPolling';
+import { usePickupEtaAlert } from '../../hooks/usePickupEtaAlert';
+import { alertOrderStatusOnce } from '../../services/orderAlerts';
+import { getShoppingState, getShoppingStateLabel, isShoppingFinished } from '../../utils/orderFormat';
 
 export default function OrderStatusScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
-  const [order, setOrder] = useState<Order | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Re-fetches every 5 s while this screen is open, until shopping is completed / needs attention
+  const { order, loading, error } = useOrderPolling(id ? Number(id) : null);
+  usePickupEtaAlert(order);
 
-  const showAlert = (title: string, msg: string) => {
-    Platform.OS === 'web' ? alert(`${title}: ${msg}`) : Alert.alert(title, msg);
-  };
-
+  const shoppingState = order ? getShoppingState(order) : null;
   useEffect(() => {
-    if (!id) return;
+    if (order && isShoppingFinished(shoppingState)) {
+      alertOrderStatusOnce(order);
+    }
+  }, [order?.id, shoppingState]);
 
-    const loadOrder = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchOrder(Number(id));
-        setOrder(data);
-      } catch (err: any) {
-        showAlert('Error', typeof err === 'string' ? err : 'Could not load order details');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadOrder();
-  }, [id]);
-
-  if (loading) {
+  if (loading && !order) {
     return (
       <SafeAreaView style={styles.center}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
@@ -54,7 +43,7 @@ export default function OrderStatusScreen() {
   if (!order) {
     return (
       <SafeAreaView style={styles.center}>
-        <Text style={styles.errorText}>Order not found.</Text>
+        <Text style={styles.errorText}>{error || 'Order not found.'}</Text>
         <Button title="Go to Dashboard" onPress={() => router.replace('/(customer)')} />
       </SafeAreaView>
     );
@@ -82,6 +71,12 @@ export default function OrderStatusScreen() {
           <Text style={styles.orderId}>Order #{order.id}</Text>
         </View>
 
+        <PickupOtpCard
+          order={order}
+          onPayPress={() => router.push({ pathname: '/(customer)/payment', params: { id: String(order.id) } })}
+        />
+        <PickupDetailsCard order={order} />
+
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Status Updates</Text>
           <View style={styles.statusRow}>
@@ -101,6 +96,22 @@ export default function OrderStatusScreen() {
           {order.mqtt_status === 'failed' && (
             <Text style={styles.errorMsg}>Smart Cart communication is temporarily unavailable.</Text>
           )}
+          <View style={styles.statusRow}>
+            <View
+              style={[
+                styles.statusDot,
+                { backgroundColor: shoppingState === 'completed' ? theme.colors.success
+                  : shoppingState === 'needs_attention' ? theme.colors.error : theme.colors.warning },
+              ]}
+            />
+            <Text style={styles.statusText}>
+              Shopping: <Text style={styles.statusValue}>{getShoppingStateLabel(shoppingState)}</Text>
+            </Text>
+          </View>
+          {shoppingState === 'needs_attention' && (
+            <Text style={styles.errorMsg}>Some items could not be collected, please see staff.</Text>
+          )}
+          {!!error && <Text style={styles.errorMsg}>Connection issue: {error}. Retrying…</Text>}
         </View>
 
         <View style={styles.card}>
@@ -153,6 +164,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: theme.spacing.lg,
+    paddingBottom: 130, // clear the floating tab bar
   },
   successCard: {
     alignItems: 'center',

@@ -56,6 +56,8 @@ MQTT_TARGET_TOPIC = os.environ.get('MQTT_TARGET_TOPIC', 'cartmate/navigation/tar
 MQTT_QOS = int(os.environ.get('MQTT_QOS', '1'))
 MQTT_MAX_RETRIES = int(os.environ.get('MQTT_MAX_RETRIES', '3'))
 DEFAULT_CART_ID = os.environ.get('DEFAULT_CART_ID', 'CART_01')
+# Cart progress topic: cartmate/cart/<cart_id>/status
+MQTT_STATUS_TOPIC = os.environ.get('MQTT_STATUS_TOPIC', 'cartmate/cart/+/status')
 
 
 def create_mqtt_client(client_id_prefix: str = None):
@@ -197,3 +199,105 @@ def publish_order(order, items):
 
     waypoints = list(shelf_groups.values())
     return publish_navigation_route(order_code, cart_id, waypoints)
+
+
+# ---------------------------------------------------------------------------
+# Cart status subscriber (Raspberry Pi -> backend)
+# Topic: cartmate/cart/<cart_id>/status
+# Payload: {"order_id": "ORD_0002", "cart_id": "CART_01", "state": "order_done",
+#           "item": ..., "detail": ..., "seq": n, "ts": ...}
+# ---------------------------------------------------------------------------
+_status_subscriber_started = False  # single module-level flag: at most one subscriber per process
+_status_client = None
+
+
+def handle_status_message(app, topic: str, raw_payload: bytes) -> bool:
+    """Apply one cart status message to its Order. Never raises. Returns True when an order was updated."""
+    try:
+        payload = json.loads(raw_payload.decode('utf-8'))
+        if not isinstance(payload, dict):
+            raise ValueError("payload is not a JSON object")
+    except Exception as e:
+        logger.warning(f"[CARTMATE MQTT] Ignoring invalid status payload on {topic}: {e}")
+        return False
+
+    from models import db, Order
+    from order_status import apply_cart_state, parse_order_id
+
+    order_id = parse_order_id(payload.get('order_id'))
+    state = str(payload.get('state') or '').strip().lower()
+    if order_id is None or not state:
+        logger.warning(f"[CARTMATE MQTT] Status message on {topic} missing order_id/state")
+        return False
+
+    # Prefer the cart id from the topic (cartmate/cart/<cart_id>/status), fall back to the payload
+    parts = topic.split('/')
+    topic_cart = parts[2] if len(parts) == 4 else None
+    cart_id = (payload.get('cart_id') or topic_cart or '').upper()
+
+    with app.app_context():
+        try:
+            order = db.session.get(Order, order_id)
+            if not order:
+                logger.warning(f"[CARTMATE MQTT] Status for unknown order {payload.get('order_id')}")
+                return False
+            if cart_id and order.cart_id and cart_id != order.cart_id.upper():
+                logger.warning(f"[CARTMATE MQTT] Cart {cart_id} reported on {order.order_code} "
+                               f"which belongs to {order.cart_id}; ignored")
+                return False
+            apply_cart_state(order, state, item=payload.get('item'), detail=payload.get('detail'))
+            db.session.commit()
+            logger.info(f"[CARTMATE MQTT] {order.order_code} <- {state} (shopping_state: {order.shopping_state})")
+            return True
+        except Exception:
+            db.session.rollback()
+            logger.exception("[CARTMATE MQTT] Failed to apply cart status message")
+            return False
+        finally:
+            db.session.remove()
+
+
+def start_status_subscriber(app, reloader_active: bool = False):
+    """
+    Start a background paho-mqtt loop subscribed to the cart status topic.
+    Only runs when MQTT_MODE=real, and only once per process (module-level flag).
+    reloader_active: True when Flask's debug reloader is on. Then only the reloader child
+    (WERKZEUG_RUN_MAIN == "true") subscribes; the parent process just watches files.
+    Never raises: if paho is missing or the broker is down the app keeps running and
+    paho retries the connection in its own thread.
+    """
+    global _status_client, _status_subscriber_started
+    if MQTT_MODE != 'real':
+        logger.info("[CARTMATE MQTT] Status subscriber disabled (MQTT_MODE != real)")
+        return None
+    if reloader_active and os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+        return None
+    if _status_subscriber_started:
+        return _status_client
+    _status_subscriber_started = True
+
+    try:
+        client = create_mqtt_client('cartmate-status')
+
+        def on_connect(client, userdata, flags, rc, properties=None):
+            if rc == 0:
+                client.subscribe(MQTT_STATUS_TOPIC, qos=MQTT_QOS)
+                logger.info(f"[CARTMATE MQTT] Subscribed to {MQTT_STATUS_TOPIC}")
+            else:
+                logger.warning(f"[CARTMATE MQTT] Status subscriber connect failed rc={rc}")
+
+        def on_message(client, userdata, msg):
+            handle_status_message(app, msg.topic, msg.payload)
+
+        client.on_connect = on_connect
+        client.on_message = on_message
+        client.reconnect_delay_set(min_delay=2, max_delay=60)
+        # connect_async + loop_start: does not block or raise if the broker is down; paho keeps retrying
+        client.connect_async(MQTT_BROKER_HOST, MQTT_BROKER_PORT, keepalive=30)
+        client.loop_start()
+        _status_client = client
+        logger.info(f"[CARTMATE MQTT] Status subscriber started for {MQTT_BROKER_HOST}:{MQTT_BROKER_PORT}")
+        return client
+    except Exception as e:
+        logger.warning(f"[CARTMATE MQTT] Status subscriber not started: {e}")
+        return None

@@ -170,7 +170,27 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='customer')
+    name = db.Column(db.String(120), nullable=True)  # Customer display name (optional)
+    # TODO(push): add `push_token = db.Column(db.String(255), nullable=True)` here to store the
+    # Expo push token the app registers after login (remote push needs a dev build, not Expo Go).
     orders = db.relationship('Order', backref='user', lazy=True)
+
+    @property
+    def display_name(self):
+        """Customer name, falling back to the email local part capitalised (user@x.com -> 'User')."""
+        if self.name and self.name.strip():
+            return self.name.strip()
+        local_part = (self.email or '').split('@')[0]
+        return local_part.capitalize() if local_part else None
+
+
+def iso_utc(value):
+    """ISO-8601 string with an explicit UTC offset. Naive datetimes (SQLite) are stored as UTC."""
+    if not value:
+        return None
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc).isoformat()
 
 
 class Order(db.Model):
@@ -185,7 +205,28 @@ class Order(db.Model):
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     submitted_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    items = db.relationship('OrderItem', backref='order', lazy=True, cascade='all, delete-orphan')
+    # Payment, pickup and cart OTP (all nullable so existing rows stay valid)
+    session_code = db.Column(db.String(40), nullable=True)
+    payment_status = db.Column(db.String(20), nullable=True, default='unpaid')  # 'unpaid' | 'paid'
+    paid_at = db.Column(db.DateTime, nullable=True)
+    pickup_eta = db.Column(db.DateTime, nullable=True)
+    otp_encrypted = db.Column(db.Text, nullable=True)     # Fernet token; only GET /otp endpoints decrypt it
+    otp_expires_at = db.Column(db.DateTime, nullable=True)
+    otp_attempts = db.Column(db.Integer, nullable=True, default=0)
+    otp_locked = db.Column(db.Boolean, nullable=True, default=False)
+    completed_at = db.Column(db.DateTime, nullable=True)
+    picked_up_at = db.Column(db.DateTime, nullable=True)  # set when the cart verifies the OTP
+    # Cart progress, kept separate from `status` (which the cart never changes):
+    # 'waiting' | 'picking' | 'completed' | 'needs_attention'
+    shopping_state = db.Column(db.String(20), nullable=True, default='waiting')
+
+    items =db.relationship('OrderItem', backref='order', lazy=True, cascade='all, delete-orphan')
+    events = db.relationship('OrderEvent', backref='order', lazy=True, cascade='all, delete-orphan',
+                             order_by='OrderEvent.id')
+
+    @property
+    def order_code(self):
+        return f"ORD_{self.id:04d}"
 
     def to_dict(self, include_items=False):
         data = {
@@ -200,10 +241,42 @@ class Order(db.Model):
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'submitted_at': self.submitted_at.isoformat() if self.submitted_at else None,
             'item_count': len(self.items) if self.items else 0,
+            'customer_name': self.user.display_name if self.user else None,
+            'session_code': self.session_code,
+            'payment_status': self.payment_status or 'unpaid',
+            'shopping_state': self.shopping_state or 'waiting',
+            'paid_at': iso_utc(self.paid_at),
+            'pickup_eta': iso_utc(self.pickup_eta),
+            'completed_at': iso_utc(self.completed_at),
+            'otp_expires_at': iso_utc(self.otp_expires_at),
+            'otp_locked': bool(self.otp_locked),
+            'picked_up_at': iso_utc(self.picked_up_at),
+            # NOTE: otp_encrypted / the OTP itself are never serialised here (see GET /api/orders/<id>/otp).
         }
         if include_items and self.items:
             data['items'] = [item.to_dict() for item in self.items]
         return data
+
+
+class OrderEvent(db.Model):
+    """Progress messages reported by the cart (MQTT cartmate/cart/<cart_id>/status or PATCH status)."""
+    __tablename__ = 'order_events'
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False, index=True)
+    state = db.Column(db.String(30), nullable=False)
+    item = db.Column(db.String(120), nullable=True)
+    detail = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'order_id': self.order_id,
+            'state': self.state,
+            'item': self.item,
+            'detail': self.detail,
+            'created_at': iso_utc(self.created_at),
+        }
 
 
 class OrderItem(db.Model):

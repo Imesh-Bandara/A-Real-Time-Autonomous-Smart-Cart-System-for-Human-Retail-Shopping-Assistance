@@ -21,6 +21,7 @@ import { useRouter } from 'expo-router';
 import { useCart } from '../../context/CartContext';
 import { theme } from '../../theme/theme';
 import { getImageUrl, checkoutOrder, CheckoutResponse } from '../../api/apiService';
+import { parseOrderNumber } from '../../utils/orderFormat';
 
 const { width: SW, height: SH } = Dimensions.get('window');
 
@@ -139,7 +140,8 @@ export default function CartScreen() {
     ]).start();
   };
 
-  const closeSuccessModal = () => {
+  const closeSuccessModal = (next: 'shop' | 'payment' = 'shop') => {
+    const orderId = checkoutResult?.id ?? parseOrderNumber(checkoutResult?.order_id);
     Animated.parallel([
       Animated.timing(bgOpacity, { toValue: 0, duration: 220, useNativeDriver: true }),
       Animated.timing(modalSlide, { toValue: SH, duration: 260, useNativeDriver: true }),
@@ -147,7 +149,12 @@ export default function CartScreen() {
       setSuccessModalVisible(false);
       modalSlide.setValue(SH);
       bgOpacity.setValue(0);
-      router.push('/(customer)/shop');
+      if (next === 'payment' && orderId) {
+        router.push({ pathname: '/(customer)/payment', params: { id: String(orderId) } });
+      } else {
+        clearCart();
+        router.push('/(customer)/shop');
+      }
     });
   };
 
@@ -312,7 +319,7 @@ export default function CartScreen() {
         transparent
         animationType="none"
         statusBarTranslucent
-        onRequestClose={closeSuccessModal}
+        onRequestClose={() => closeSuccessModal('shop')}
       >
         <Animated.View style={[styles.sweetAlertOverlay, { opacity: bgOpacity }]}>
           <FloatingDots />
@@ -326,6 +333,12 @@ export default function CartScreen() {
               style={styles.sweetAlertTopBar}
             />
 
+            <ScrollView
+              style={styles.sweetAlertScroll}
+              contentContainerStyle={styles.sweetAlertScrollContent}
+              showsVerticalScrollIndicator={false}
+              bounces={false}
+            >
             {/* Animated success ring */}
             <View style={styles.sweetAlertIconArea}>
               {successModalVisible && <SuccessRing />}
@@ -379,10 +392,10 @@ export default function CartScreen() {
               <Text style={styles.totalAmount}>${checkoutResult?.total_amount?.toFixed(2) ?? '—'}</Text>
             </View>
 
-            {/* CTA button */}
+            {/* CTA buttons */}
             <TouchableOpacity
               style={styles.sweetAlertBtn}
-              onPress={closeSuccessModal}
+              onPress={() => closeSuccessModal('payment')}
               activeOpacity={0.88}
             >
               <LinearGradient
@@ -391,10 +404,19 @@ export default function CartScreen() {
                 end={{ x: 1, y: 0 }}
                 style={styles.sweetAlertBtnGradient}
               >
-                <Ionicons name="storefront-outline" size={18} color="#FFF" style={{ marginRight: 8 }} />
-                <Text style={styles.sweetAlertBtnText}>Continue Shopping</Text>
+                <Ionicons name="card-outline" size={18} color="#FFF" style={{ marginRight: 8 }} />
+                <Text style={styles.sweetAlertBtnText}>Make Payment</Text>
               </LinearGradient>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.sweetAlertSecondaryBtn}
+              onPress={() => closeSuccessModal('shop')}
+              activeOpacity={0.88}
+            >
+              <Ionicons name="storefront-outline" size={18} color="#4F46E5" style={{ marginRight: 8 }} />
+              <Text style={styles.sweetAlertSecondaryBtnText}>Continue Shopping</Text>
+            </TouchableOpacity>
+            </ScrollView>
           </Animated.View>
         </Animated.View>
       </Modal>
@@ -776,6 +798,30 @@ const styles = StyleSheet.create({
   },
   sweetAlertBtnText: {
     color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: 0.3,
+  },
+  sweetAlertScroll: {
+    width: '100%',
+  },
+  sweetAlertScrollContent: {
+    alignItems: 'center',
+  },
+  sweetAlertSecondaryBtn: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 15,
+    marginTop: 10,
+    borderRadius: 18,
+    borderWidth: 1.5,
+    borderColor: '#C7D2FE',
+    backgroundColor: '#EEF2FF',
+  },
+  sweetAlertSecondaryBtnText: {
+    color: '#4F46E5',
     fontSize: 16,
     fontWeight: '800',
     letterSpacing: 0.3,

@@ -132,6 +132,18 @@ export default function CustomerLayout() {
           href: null, // Hide from tab bar
         }}
       />
+      <Tabs.Screen
+        name="payment"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="order-confirmation"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
     </Tabs>
   );
 }

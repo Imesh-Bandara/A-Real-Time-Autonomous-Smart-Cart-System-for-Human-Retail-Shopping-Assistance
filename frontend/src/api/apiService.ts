@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 
 // IMPORTANT: If testing on a physical phone via Expo Go, replace 127.0.0.1
 // with your computer's local IP address (e.g., 'http://192.168.1.X:5000')
-export const API_BASE_URL = 'http://127.0.0.1:5000';
+export const API_BASE_URL = 'http://10.235.47.125:5000';
 
 // ---------------------------------------------------------------------------
 // JWT token management — stored in memory (no async-storage dependency)
@@ -107,7 +107,17 @@ export interface CheckoutResponse {
   mqtt_mode: string;
   message: string;
   warning?: string;
+  id?: number;                 // Numeric order id (order_id is the 'ORD_0002' code)
+  session_code?: string;
+  payment_status?: PaymentStatus;
+  shopping_state?: ShoppingState;
+  pickup_eta?: string | null;
 }
+
+export type PaymentStatus = 'unpaid' | 'paid';
+
+// Cart progress (separate from Order.status, which the cart never changes)
+export type ShoppingState = 'waiting' | 'picking' | 'completed' | 'needs_attention';
 
 export interface ProductPayload {
   name: string;
@@ -145,6 +155,53 @@ export interface Order {
   item_count: number;
   items?: OrderItem[];
   user_email?: string;        // Admin view only
+  order_code?: string;        // 'ORD_0002'
+  cart_id?: string;           // 'CART_01'
+  customer_name?: string | null;
+  session_code?: string | null;   // 'SES-20261020-0002'
+  payment_status?: PaymentStatus;
+  shopping_state?: ShoppingState; // Cart progress: waiting | picking | completed | needs_attention
+  paid_at?: string | null;
+  pickup_eta?: string | null;     // Estimate until the cart finishes, then the real finish time
+  completed_at?: string | null;
+  otp_expires_at?: string | null;
+  otp_locked?: boolean;
+  picked_up_at?: string | null;
+}
+
+export interface OrderOtp {
+  order_id: string;
+  cart_id: string;
+  otp: string;
+  expires_at: string | null;
+}
+
+// GET /api/orders/<id>/otp — errors are returned (not thrown) so screens can show the right state
+export type OrderOtpResult =
+  | { ok: true; data: OrderOtp }
+  | { ok: false; status: number | null; reason: string | null; message: string };
+
+export interface PayOrderResponse {
+  status: string;
+  id: number;
+  order_id: string;
+  cart_id: string;
+  payment_status: PaymentStatus;
+  paid_at: string | null;
+  otp?: string;                  // Only present the first time the order is paid
+  otp_already_issued: boolean;
+  otp_expires_at: string | null;
+  order: Order;
+  msg?: string;
+}
+
+export interface OrderEvent {
+  id: number;
+  order_id: number;
+  state: string;
+  item: string | null;
+  detail: string | null;
+  created_at: string | null;
 }
 
 export interface SubmitOrderResponse {
@@ -297,6 +354,45 @@ export const fetchOrder = async (orderId: number): Promise<Order> => {
     return response.data;
   } catch (error) {
     throw getErrorMessage(error, 'Failed to fetch order.');
+  }
+};
+
+const isSessionExpired = (error: unknown) =>
+  axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 422);
+
+const SESSION_EXPIRED_MSG = 'Your login session has expired. Please log out and log in again.';
+
+// Mock payment (requires login; the order must belong to the user). Paying again keeps the same OTP.
+export const payOrder = async (orderId: number): Promise<PayOrderResponse> => {
+  try {
+    const response = await api.post(`/api/orders/${orderId}/pay`);
+    return response.data;
+  } catch (error) {
+    if (isSessionExpired(error)) throw SESSION_EXPIRED_MSG;
+    throw getErrorMessage(error, 'Payment failed. Please try again.');
+  }
+};
+
+export const fetchOrderOtp = async (orderId: number): Promise<OrderOtpResult> => {
+  try {
+    const response = await api.get(`/api/orders/${orderId}/otp`);
+    return { ok: true, data: response.data };
+  } catch (error) {
+    const status = axios.isAxiosError(error) ? error.response?.status ?? null : null;
+    const reason = axios.isAxiosError<{ reason?: string }>(error) ? error.response?.data?.reason ?? null : null;
+    const message = isSessionExpired(error)
+      ? SESSION_EXPIRED_MSG
+      : getErrorMessage(error, 'Could not load your OTP.');
+    return { ok: false, status, reason, message };
+  }
+};
+
+export const fetchOrderEvents = async (orderId: number): Promise<OrderEvent[]> => {
+  try {
+    const response = await api.get(`/api/orders/${orderId}/events`);
+    return response.data;
+  } catch (error) {
+    throw getErrorMessage(error, 'Failed to fetch order progress.');
   }
 };
 
