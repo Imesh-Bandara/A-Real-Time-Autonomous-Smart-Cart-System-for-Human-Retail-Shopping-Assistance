@@ -16,19 +16,44 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { claimOrderAlert } from './orderStorage';
 import { formatCartLabel, formatTime, getShoppingState, isShoppingFinished, parseServerDate } from '../utils/orderFormat';
 
-let Notifications: typeof NotificationsModule | null = null;
+// Only the LOCAL-notification parts of expo-notifications. The package index also loads the
+// remote-push topic module (ExpoTopicSubscriptionModule), which does not exist in Expo Go on
+// Android (SDK 53+) and throws "Cannot find native module". Importing these files directly avoids it.
+type LocalNotificationsApi = Pick<
+  typeof NotificationsModule,
+  | 'setNotificationHandler'
+  | 'setNotificationChannelAsync'
+  | 'getPermissionsAsync'
+  | 'requestPermissionsAsync'
+  | 'scheduleNotificationAsync'
+  | 'cancelScheduledNotificationAsync'
+  | 'AndroidImportance'
+  | 'SchedulableTriggerInputTypes'
+>;
+
+let Notifications: LocalNotificationsApi | null = null;
+let notificationsUnavailable = false; // remember a failed load so it is not retried (and logged) every call
 let configured = false;
 
 const PICKUP_REMINDER_KIND = 'pickup_eta';
 const reminderKey = (orderId: number) => `cartmate_pickup_reminder_${orderId}`;
 
-const loadNotifications = (): typeof NotificationsModule | null => {
-  if (Platform.OS === 'web') return null;
+const loadNotifications = (): LocalNotificationsApi | null => {
+  if (Platform.OS === 'web' || notificationsUnavailable) return null;
   if (!Notifications) {
     try {
-      Notifications = require('expo-notifications');
+      Notifications = {
+        ...require('expo-notifications/build/NotificationsHandler'),
+        ...require('expo-notifications/build/NotificationPermissions'),
+        ...require('expo-notifications/build/setNotificationChannelAsync'),
+        ...require('expo-notifications/build/scheduleNotificationAsync'),
+        ...require('expo-notifications/build/cancelScheduledNotificationAsync'),
+        ...require('expo-notifications/build/NotificationChannelManager.types'),
+        ...require('expo-notifications/build/Notifications.types'),
+      } as LocalNotificationsApi;
     } catch (err) {
-      console.warn('[CartMate] expo-notifications unavailable', err);
+      notificationsUnavailable = true;
+      console.warn('[CartMate] Local notifications unavailable; in-app alerts only.', err);
       return null;
     }
   }
